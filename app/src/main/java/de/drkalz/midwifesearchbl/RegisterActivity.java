@@ -17,6 +17,8 @@ import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 
+import de.drkalz.midwifesearchbl.DataObjects.UserAddress;
+
 public class RegisterActivity extends AppCompatActivity {
 
     @Override
@@ -108,22 +110,22 @@ public class RegisterActivity extends AppCompatActivity {
                     user.setPassword(cuPassword.getText().toString());
                     user.setProperty("isMidwife", isMidwife[0]);
 
-                    final UserProperties newUser = new UserProperties();
-                    newUser.setFirstname(cuFirstname.getText().toString());
-                    newUser.setLastname(cuName.getText().toString());
-                    newUser.setStreet(cuStreet.getText().toString());
-                    newUser.setCity(cuCity.getText().toString());
-                    newUser.setCountry(cuCountry.getText().toString());
-                    newUser.setZip(Integer.parseInt(cuZip.getText().toString()));
-                    newUser.setTelefon(cuTelefon.getText().toString());
-                    newUser.setMobil(cuMobil.getText().toString());
-                    newUser.setHomepage(cuHomepage.getText().toString());
-                    user.setProperty("Address", newUser);
+                    final UserAddress userAddress = new UserAddress();
+                    userAddress.setFirstname(cuFirstname.getText().toString());
+                    userAddress.setLastname(cuName.getText().toString());
+                    userAddress.setStreet(cuStreet.getText().toString());
+                    userAddress.setCity(cuCity.getText().toString());
+                    userAddress.setCountry(cuCountry.getText().toString());
+                    userAddress.setZip(Integer.parseInt(cuZip.getText().toString()));
+                    userAddress.setTelefon(cuTelefon.getText().toString());
+                    userAddress.setMobil(cuMobil.getText().toString());
+                    userAddress.setHomepage(cuHomepage.getText().toString());
+                    user.setProperty("Address", userAddress);
 
                     Backendless.UserService.register(user, new AsyncCallback<BackendlessUser>() {
                         @Override
                         public void handleResponse(BackendlessUser response) {
-                            Toast.makeText(getApplicationContext(), newUser.getFirstname() + " " + newUser.getLastname() + " wurde registriert!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), userAddress.getFirstname() + " " + userAddress.getLastname() + " wurde registriert!", Toast.LENGTH_LONG).show();
                             String eMail = cuEmail.getText().toString();
                             String passWord = cuPassword.getText().toString();
                             Backendless.UserService.login(eMail, passWord, new AsyncCallback<BackendlessUser>() {
