@@ -1,4 +1,4 @@
-package de.drkalz.midwifesearchbl;
+package de.drkalz.midwifesearchbl.DataObjects;
 
 public class MidwifeService {
 

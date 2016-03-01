@@ -1,21 +1,32 @@
 package de.drkalz.midwifesearchbl;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.backendless.Backendless;
+import com.backendless.BackendlessCollection;
 import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.local.UserTokenStorageFactory;
+
+import java.util.Iterator;
+
+import de.drkalz.midwifesearchbl.DataObjects.UserAddress;
+import de.drkalz.midwifesearchbl.Demand.MapRequest;
+import de.drkalz.midwifesearchbl.Offer.MidwifeArea;
+import de.drkalz.midwifesearchbl.Offer.ServiceActivity;
+import de.drkalz.midwifesearchbl.Offer.SetBlockedTime;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,8 +35,83 @@ public class MainActivity extends AppCompatActivity {
     public final String APP_VERSION ="v1";
     public String currentUserId;
     public boolean isMidwife;
-    public BackendlessUser currentUser;
+    ImageButton ibArea, ibTime, ibService, ibSearch;
+    TextView tvAbwesenheit, tvArea, tvService, tvSearch;
+    Button buLogout;
+    TextView tvUser;
+    StartApp sApp = StartApp.getInstance();
 
+    public void doSomeAction(View view) {
+
+        int i = Integer.parseInt(view.getTag().toString());
+
+        switch (i) {
+            case 1:
+                if (sApp.isMidwife()) {
+                    Intent intent = new Intent(MainActivity.this, SetBlockedTime.class);
+                    intent.putExtra("userUID", sApp.getCurrentUser().getObjectId());
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+                    intent.putExtra("userUID", sApp.getCurrentUser().getObjectId());
+                    intent.putExtra("userPassword", sApp.getUserPassword());
+                    intent.putExtra("changeData", true);
+                    startActivity(intent);
+                    finish();
+                }
+                break;
+            case 2:
+                if (sApp.isMidwife()) {
+                    Intent intent = new Intent(MainActivity.this, MidwifeArea.class);
+                    intent.putExtra("userUID", sApp.getCurrentUser().getObjectId());
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(MainActivity.this, MapRequest.class);
+                    intent.putExtra("userUID", sApp.getCurrentUser().getObjectId());
+                    startActivity(intent);
+                    finish();
+                }
+                break;
+            case 3:
+                if (sApp.isMidwife()) {
+                    Intent intent = new Intent(MainActivity.this, ServiceActivity.class);
+                    intent.putExtra("userUID", sApp.getCurrentUser().getObjectId());
+                    startActivity(intent);
+                    finish();
+                } else {
+
+                }
+                break;
+
+            case 4:
+                if (sApp.isMidwife()) {
+
+                } else {
+
+                }
+                break;
+            case 5:
+                Backendless.UserService.logout(new AsyncCallback<Void>() {
+                    @Override
+                    public void handleResponse(Void response) {
+                        sApp.setCurrentUser(null);
+                        sApp.setUserAddress(null);
+                        sApp.setMidwife(false);
+                        sApp.setUserEmail("");
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void handleFault(BackendlessFault fault) {
+                        Toast.makeText(getApplicationContext(), "Logout failed!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,26 +119,64 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final ImageButton ibArea = (ImageButton) findViewById(R.id.ib_Area);
-        final ImageButton ibTime = (ImageButton) findViewById(R.id.ib_Abwesenheit);
-        final ImageButton ibService = (ImageButton) findViewById(R.id.ib_Service);
-        final ImageButton ibSearch = (ImageButton) findViewById(R.id.ib_search);
-        final Button buLogout = (Button) findViewById(R.id.bu_logout);
-        final TextView tvUser = (TextView) findViewById(R.id.tv_User);
+        ibArea = (ImageButton) findViewById(R.id.ib_Area);
+        ibTime = (ImageButton) findViewById(R.id.ib_Abwesenheit);
+        ibService = (ImageButton) findViewById(R.id.ib_Service);
+        ibSearch = (ImageButton) findViewById(R.id.ib_search);
+        buLogout = (Button) findViewById(R.id.bu_logout);
+        tvAbwesenheit = (TextView) findViewById(R.id.tv_Abwesenheit);
+        tvArea = (TextView) findViewById(R.id.tv_Area);
+        tvService = (TextView) findViewById(R.id.tv_Service);
+        tvSearch = (TextView) findViewById(R.id.tv_Search);
+        tvUser = (TextView) findViewById(R.id.tv_User);
+        sApp.setMidwife(false);
 
         Backendless.initApp(this, APP_KEY, API_KEY, APP_VERSION);
-        currentUser = Backendless.UserService.CurrentUser();
+        sApp.setCurrentUser(Backendless.UserService.CurrentUser());
 
-        if (currentUser == null) {
-            String userToken = UserTokenStorageFactory.instance().getStorage().get();
+        final AsyncCallback<BackendlessCollection<UserAddress>> callback = new AsyncCallback<BackendlessCollection<UserAddress>>() {
+            @Override
+            public void handleResponse(BackendlessCollection<UserAddress> response) {
+                Iterator<UserAddress> iterator = response.getCurrentPage().iterator();
+                while (iterator.hasNext()) {
+                    sApp.setUserAddress(iterator.next());
+                    tvUser.setText(sApp.getFullUserName());
+                }
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+
+            }
+        };
+
+        if (sApp.getCurrentUser() == null) {
+            final String userToken = UserTokenStorageFactory.instance().getStorage().get();
             if (userToken != null && !userToken.equals("")) {
                 currentUserId = Backendless.UserService.loggedInUser();
                 Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
                     @Override
                     public void handleResponse(BackendlessUser response) {
                         Backendless.UserService.setCurrentUser(response);
-                        currentUser = Backendless.UserService.CurrentUser();
-                        isMidwife = (boolean) currentUser.getProperty("isMidwife");
+                        sApp.setCurrentUser(Backendless.UserService.CurrentUser());
+                        isMidwife = (boolean) sApp.getCurrentUser().getProperty("isMidwife");
+                        Backendless.Data.of(UserAddress.class).find(callback);
+                        if (sApp.isMidwife() == false) {
+                            sApp.setMidwife(false);
+                            tvAbwesenheit.setText("persönliche Daten ändern");
+                            tvArea.setText("Anfrage senden");
+                            tvSearch.setText("Suche Hebamme");
+                            tvService.setTextColor(Color.LTGRAY);
+                            ibService.setVisibility(View.INVISIBLE);
+                        } else {
+                            sApp.setMidwife(true);
+                            tvAbwesenheit.setText("Abwesenheiten planen");
+                            tvArea.setText("Gebiete festlegen");
+                            tvSearch.setText("Anfragen suchen");
+                            tvService.setText("Serviceportfolio ändern");
+                            tvService.setTextColor(Color.BLACK);
+                            ibService.setVisibility(View.VISIBLE);
+                        }
                     }
                     @Override
                     public void handleFault(BackendlessFault fault) {

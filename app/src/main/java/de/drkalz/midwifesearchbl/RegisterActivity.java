@@ -21,6 +21,8 @@ import de.drkalz.midwifesearchbl.DataObjects.UserAddress;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    final StartApp sApp = StartApp.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
