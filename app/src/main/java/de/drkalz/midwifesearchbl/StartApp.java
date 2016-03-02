@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.backendless.BackendlessUser;
 
-import de.drkalz.midwifesearchbl.DataObjects.UserAddress;
+import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
 
 /**
  * Created by Alex on 03.02.16.
@@ -17,7 +17,6 @@ public class StartApp extends Application {
     private UserAddress mUserAddress;
     private String mUserEmail;
     private String mUserPassword;
-    private String mFullUserName;
 
     public static StartApp getInstance() {
         return singleInstance;

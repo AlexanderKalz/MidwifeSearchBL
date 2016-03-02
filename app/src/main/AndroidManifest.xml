@@ -2,15 +2,8 @@
 <manifest package="de.drkalz.midwifesearchbl"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
-    -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
@@ -49,7 +42,7 @@
                 android:value="de.drkalz.midwifesearchbl.MainActivity"/>
         </activity>
         <activity
-            android:name=".Offer.SetBlockedTime"
+            android:name="de.drkalz.midwifesearchbl.offer.SetBlockedTime"
             android:label="@string/title_activity_set_blocked_time"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -58,7 +51,7 @@
                 android:value="de.drkalz.midwifesearchbl.MainActivity"/>
         </activity>
         <activity
-            android:name=".Demand.MapRequest"
+            android:name=".demand.MapRequest"
             android:label="@string/title_activity_map_request"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -79,14 +72,14 @@
             android:value="@string/google_maps_key"/>
 
         <activity
-            android:name=".Offer.MidwifeArea"
+            android:name=".offer.MidwifeArea"
             android:label="@string/title_activity_midwife_area">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.drkalz.midwifesearchbl.MainActivity"/>
         </activity>
         <activity
-            android:name=".Offer.ServiceActivity"
+            android:name=".offer.ServiceActivity"
             android:label="@string/title_activity_service"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">

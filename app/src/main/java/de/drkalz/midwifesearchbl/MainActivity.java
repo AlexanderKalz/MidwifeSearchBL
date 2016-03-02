@@ -22,11 +22,11 @@ import com.backendless.persistence.local.UserTokenStorageFactory;
 
 import java.util.Iterator;
 
-import de.drkalz.midwifesearchbl.DataObjects.UserAddress;
-import de.drkalz.midwifesearchbl.Demand.MapRequest;
-import de.drkalz.midwifesearchbl.Offer.MidwifeArea;
-import de.drkalz.midwifesearchbl.Offer.ServiceActivity;
-import de.drkalz.midwifesearchbl.Offer.SetBlockedTime;
+import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
+import de.drkalz.midwifesearchbl.demand.MapRequest;
+import de.drkalz.midwifesearchbl.offer.MidwifeArea;
+import de.drkalz.midwifesearchbl.offer.ServiceActivity;
+import de.drkalz.midwifesearchbl.offer.SetBlockedTime;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -134,10 +134,10 @@ public class MainActivity extends AppCompatActivity {
         Backendless.initApp(this, APP_KEY, API_KEY, APP_VERSION);
         sApp.setCurrentUser(Backendless.UserService.CurrentUser());
 
-        final AsyncCallback<BackendlessCollection<UserAddress>> callback = new AsyncCallback<BackendlessCollection<UserAddress>>() {
+        final AsyncCallback<BackendlessCollection<UserAddress>> userCallback = new AsyncCallback<BackendlessCollection<UserAddress>>() {
             @Override
-            public void handleResponse(BackendlessCollection<UserAddress> response) {
-                Iterator<UserAddress> iterator = response.getCurrentPage().iterator();
+            public void handleResponse(BackendlessCollection<UserAddress> user) {
+                Iterator<UserAddress> iterator = user.getCurrentPage().iterator();
                 while (iterator.hasNext()) {
                     sApp.setUserAddress(iterator.next());
                     tvUser.setText(sApp.getFullUserName());
@@ -160,7 +160,10 @@ public class MainActivity extends AppCompatActivity {
                         Backendless.UserService.setCurrentUser(response);
                         sApp.setCurrentUser(Backendless.UserService.CurrentUser());
                         isMidwife = (boolean) sApp.getCurrentUser().getProperty("isMidwife");
-                        Backendless.Data.of(UserAddress.class).find(callback);
+                        sApp.setMidwife(isMidwife);
+                        sApp.setUserEmail(sApp.getCurrentUser().getEmail());
+                        sApp.setUserAddress((UserAddress) sApp.getCurrentUser().getProperty("Address"));
+                        Backendless.Data.of(UserAddress.class).find(userCallback);
                         if (sApp.isMidwife() == false) {
                             sApp.setMidwife(false);
                             tvAbwesenheit.setText("persönliche Daten ändern");

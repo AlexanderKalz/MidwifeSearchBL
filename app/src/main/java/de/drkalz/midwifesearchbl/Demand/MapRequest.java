@@ -1,4 +1,4 @@
-package de.drkalz.midwifesearchbl.Demand;
+package de.drkalz.midwifesearchbl.demand;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

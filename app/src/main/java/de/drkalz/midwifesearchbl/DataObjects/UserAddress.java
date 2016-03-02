@@ -1,4 +1,4 @@
-package de.drkalz.midwifesearchbl.DataObjects;
+package de.drkalz.midwifesearchbl.dataObjects;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
@@ -20,6 +20,107 @@ public class UserAddress
   private String street;
   private java.util.Date updated;
   private String homepage;
+
+  public static UserAddress findById( String id )
+  {
+    return Backendless.Data.of( UserAddress.class ).findById( id );
+  }
+
+  public static Future<UserAddress> findByIdAsync( String id )
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<UserAddress> future = new Future<UserAddress>();
+      Backendless.Data.of( UserAddress.class ).findById( id, future );
+
+      return future;
+    }
+  }
+
+  public static void findByIdAsync( String id, AsyncCallback<UserAddress> callback )
+  {
+    Backendless.Data.of( UserAddress.class ).findById( id, callback );
+  }
+
+  public static UserAddress findFirst()
+  {
+    return Backendless.Data.of( UserAddress.class ).findFirst();
+  }
+
+  public static Future<UserAddress> findFirstAsync()
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<UserAddress> future = new Future<UserAddress>();
+      Backendless.Data.of( UserAddress.class ).findFirst( future );
+
+      return future;
+    }
+  }
+
+  public static void findFirstAsync( AsyncCallback<UserAddress> callback )
+  {
+    Backendless.Data.of( UserAddress.class ).findFirst( callback );
+  }
+
+  public static UserAddress findLast()
+  {
+    return Backendless.Data.of( UserAddress.class ).findLast();
+  }
+
+  public static Future<UserAddress> findLastAsync()
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<UserAddress> future = new Future<UserAddress>();
+      Backendless.Data.of( UserAddress.class ).findLast( future );
+
+      return future;
+    }
+  }
+
+  public static void findLastAsync( AsyncCallback<UserAddress> callback )
+  {
+    Backendless.Data.of( UserAddress.class ).findLast( callback );
+  }
+
+  public static BackendlessCollection<UserAddress> find(BackendlessDataQuery query )
+  {
+    return Backendless.Data.of( UserAddress.class ).find( query );
+  }
+
+  public static Future<BackendlessCollection<UserAddress>> findAsync(BackendlessDataQuery query )
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<BackendlessCollection<UserAddress>> future = new Future<BackendlessCollection<UserAddress>>();
+      Backendless.Data.of( UserAddress.class ).find( query, future );
+
+      return future;
+    }
+  }
+
+  public static void findAsync(BackendlessDataQuery query, AsyncCallback<BackendlessCollection<UserAddress>> callback )
+  {
+    Backendless.Data.of( UserAddress.class ).find( query, callback );
+  }
+
   public String getOwnerId()
   {
     return ownerId;
@@ -130,7 +231,6 @@ public class UserAddress
     this.homepage = homepage;
   }
 
-                                                    
   public UserAddress save()
   {
     return Backendless.Data.of( UserAddress.class ).save( this );
@@ -179,105 +279,5 @@ public class UserAddress
   public void removeAsync( AsyncCallback<Long> callback )
   {
     Backendless.Data.of( UserAddress.class ).remove( this, callback );
-  }
-
-  public static UserAddress findById( String id )
-  {
-    return Backendless.Data.of( UserAddress.class ).findById( id );
-  }
-
-  public static Future<UserAddress> findByIdAsync( String id )
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<UserAddress> future = new Future<UserAddress>();
-      Backendless.Data.of( UserAddress.class ).findById( id, future );
-
-      return future;
-    }
-  }
-
-  public static void findByIdAsync( String id, AsyncCallback<UserAddress> callback )
-  {
-    Backendless.Data.of( UserAddress.class ).findById( id, callback );
-  }
-
-  public static UserAddress findFirst()
-  {
-    return Backendless.Data.of( UserAddress.class ).findFirst();
-  }
-
-  public static Future<UserAddress> findFirstAsync()
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<UserAddress> future = new Future<UserAddress>();
-      Backendless.Data.of( UserAddress.class ).findFirst( future );
-
-      return future;
-    }
-  }
-
-  public static void findFirstAsync( AsyncCallback<UserAddress> callback )
-  {
-    Backendless.Data.of( UserAddress.class ).findFirst( callback );
-  }
-
-  public static UserAddress findLast()
-  {
-    return Backendless.Data.of( UserAddress.class ).findLast();
-  }
-
-  public static Future<UserAddress> findLastAsync()
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<UserAddress> future = new Future<UserAddress>();
-      Backendless.Data.of( UserAddress.class ).findLast( future );
-
-      return future;
-    }
-  }
-
-  public static void findLastAsync( AsyncCallback<UserAddress> callback )
-  {
-    Backendless.Data.of( UserAddress.class ).findLast( callback );
-  }
-
-  public static BackendlessCollection<UserAddress> find(BackendlessDataQuery query )
-  {
-    return Backendless.Data.of( UserAddress.class ).find( query );
-  }
-
-  public static Future<BackendlessCollection<UserAddress>> findAsync(BackendlessDataQuery query )
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<BackendlessCollection<UserAddress>> future = new Future<BackendlessCollection<UserAddress>>();
-      Backendless.Data.of( UserAddress.class ).find( query, future );
-
-      return future;
-    }
-  }
-
-  public static void findAsync(BackendlessDataQuery query, AsyncCallback<BackendlessCollection<UserAddress>> callback )
-  {
-    Backendless.Data.of( UserAddress.class ).find( query, callback );
   }
 }

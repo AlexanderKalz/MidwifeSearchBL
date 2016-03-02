@@ -1,4 +1,4 @@
-package de.drkalz.midwifesearchbl.DataObjects;
+package de.drkalz.midwifesearchbl.dataObjects;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
@@ -22,6 +22,107 @@ public class ServicePortfolio
   private Boolean rueckbildungsKurs;
   private String ownerId;
   private Boolean spanish;
+
+  public static ServicePortfolio findById( String id )
+  {
+    return Backendless.Data.of( ServicePortfolio.class ).findById( id );
+  }
+
+  public static Future<ServicePortfolio> findByIdAsync( String id )
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<ServicePortfolio> future = new Future<ServicePortfolio>();
+      Backendless.Data.of( ServicePortfolio.class ).findById( id, future );
+
+      return future;
+    }
+  }
+
+  public static void findByIdAsync( String id, AsyncCallback<ServicePortfolio> callback )
+  {
+    Backendless.Data.of( ServicePortfolio.class ).findById( id, callback );
+  }
+
+  public static ServicePortfolio findFirst()
+  {
+    return Backendless.Data.of( ServicePortfolio.class ).findFirst();
+  }
+
+  public static Future<ServicePortfolio> findFirstAsync()
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<ServicePortfolio> future = new Future<ServicePortfolio>();
+      Backendless.Data.of( ServicePortfolio.class ).findFirst( future );
+
+      return future;
+    }
+  }
+
+  public static void findFirstAsync( AsyncCallback<ServicePortfolio> callback )
+  {
+    Backendless.Data.of( ServicePortfolio.class ).findFirst( callback );
+  }
+
+  public static ServicePortfolio findLast()
+  {
+    return Backendless.Data.of( ServicePortfolio.class ).findLast();
+  }
+
+  public static Future<ServicePortfolio> findLastAsync()
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<ServicePortfolio> future = new Future<ServicePortfolio>();
+      Backendless.Data.of( ServicePortfolio.class ).findLast( future );
+
+      return future;
+    }
+  }
+
+  public static void findLastAsync( AsyncCallback<ServicePortfolio> callback )
+  {
+    Backendless.Data.of( ServicePortfolio.class ).findLast( callback );
+  }
+
+  public static BackendlessCollection<ServicePortfolio> find(BackendlessDataQuery query )
+  {
+    return Backendless.Data.of( ServicePortfolio.class ).find( query );
+  }
+
+  public static Future<BackendlessCollection<ServicePortfolio>> findAsync(BackendlessDataQuery query )
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<BackendlessCollection<ServicePortfolio>> future = new Future<BackendlessCollection<ServicePortfolio>>();
+      Backendless.Data.of( ServicePortfolio.class ).find( query, future );
+
+      return future;
+    }
+  }
+
+  public static void findAsync(BackendlessDataQuery query, AsyncCallback<BackendlessCollection<ServicePortfolio>> callback )
+  {
+    Backendless.Data.of( ServicePortfolio.class ).find( query, callback );
+  }
+
   public Boolean getGeburtsVorberetiung()
   {
     return geburtsVorberetiung;
@@ -152,7 +253,6 @@ public class ServicePortfolio
     this.spanish = spanish;
   }
 
-                                                    
   public ServicePortfolio save()
   {
     return Backendless.Data.of( ServicePortfolio.class ).save( this );
@@ -201,105 +301,5 @@ public class ServicePortfolio
   public void removeAsync( AsyncCallback<Long> callback )
   {
     Backendless.Data.of( ServicePortfolio.class ).remove( this, callback );
-  }
-
-  public static ServicePortfolio findById( String id )
-  {
-    return Backendless.Data.of( ServicePortfolio.class ).findById( id );
-  }
-
-  public static Future<ServicePortfolio> findByIdAsync( String id )
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<ServicePortfolio> future = new Future<ServicePortfolio>();
-      Backendless.Data.of( ServicePortfolio.class ).findById( id, future );
-
-      return future;
-    }
-  }
-
-  public static void findByIdAsync( String id, AsyncCallback<ServicePortfolio> callback )
-  {
-    Backendless.Data.of( ServicePortfolio.class ).findById( id, callback );
-  }
-
-  public static ServicePortfolio findFirst()
-  {
-    return Backendless.Data.of( ServicePortfolio.class ).findFirst();
-  }
-
-  public static Future<ServicePortfolio> findFirstAsync()
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<ServicePortfolio> future = new Future<ServicePortfolio>();
-      Backendless.Data.of( ServicePortfolio.class ).findFirst( future );
-
-      return future;
-    }
-  }
-
-  public static void findFirstAsync( AsyncCallback<ServicePortfolio> callback )
-  {
-    Backendless.Data.of( ServicePortfolio.class ).findFirst( callback );
-  }
-
-  public static ServicePortfolio findLast()
-  {
-    return Backendless.Data.of( ServicePortfolio.class ).findLast();
-  }
-
-  public static Future<ServicePortfolio> findLastAsync()
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<ServicePortfolio> future = new Future<ServicePortfolio>();
-      Backendless.Data.of( ServicePortfolio.class ).findLast( future );
-
-      return future;
-    }
-  }
-
-  public static void findLastAsync( AsyncCallback<ServicePortfolio> callback )
-  {
-    Backendless.Data.of( ServicePortfolio.class ).findLast( callback );
-  }
-
-  public static BackendlessCollection<ServicePortfolio> find(BackendlessDataQuery query )
-  {
-    return Backendless.Data.of( ServicePortfolio.class ).find( query );
-  }
-
-  public static Future<BackendlessCollection<ServicePortfolio>> findAsync(BackendlessDataQuery query )
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<BackendlessCollection<ServicePortfolio>> future = new Future<BackendlessCollection<ServicePortfolio>>();
-      Backendless.Data.of( ServicePortfolio.class ).find( query, future );
-
-      return future;
-    }
-  }
-
-  public static void findAsync(BackendlessDataQuery query, AsyncCallback<BackendlessCollection<ServicePortfolio>> callback )
-  {
-    Backendless.Data.of( ServicePortfolio.class ).find( query, callback );
   }
 }

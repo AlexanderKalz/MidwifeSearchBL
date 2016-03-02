@@ -1,4 +1,4 @@
-package de.drkalz.midwifesearchbl.DataObjects;
+package de.drkalz.midwifesearchbl.dataObjects;
 
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessException;

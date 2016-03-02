@@ -1,4 +1,4 @@
-package de.drkalz.midwifesearchbl.DataObjects;
+package de.drkalz.midwifesearchbl.dataObjects;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
@@ -14,107 +14,6 @@ public class MidwifeList
   private BlockedTime hasBlockedTimes;
   private ServicePortfolio hasService;
   private java.util.List<ServiceArea> areaOfService;
-
-  public java.util.Date getCreated()
-  {
-    return created;
-  }
-
-  public java.util.Date getUpdated()
-  {
-    return updated;
-  }
-
-  public String getObjectId()
-  {
-    return objectId;
-  }
-
-  public String getOwnerId()
-  {
-    return ownerId;
-  }
-
-  public BlockedTime getHasBlockedTimes()
-  {
-    return hasBlockedTimes;
-  }
-
-  public void setHasBlockedTimes( BlockedTime hasBlockedTimes )
-  {
-    this.hasBlockedTimes = hasBlockedTimes;
-  }
-
-  public ServicePortfolio getHasService()
-  {
-    return hasService;
-  }
-
-  public void setHasService( ServicePortfolio hasService )
-  {
-    this.hasService = hasService;
-  }
-
-  public java.util.List<ServiceArea> getAreaOfService()
-  {
-    return areaOfService;
-  }
-
-  public void setAreaOfService( java.util.List<ServiceArea> areaOfService )
-  {
-    this.areaOfService = areaOfService;
-  }
-
-                                                    
-  public MidwifeList save()
-  {
-    return Backendless.Data.of( MidwifeList.class ).save( this );
-  }
-
-  public Future<MidwifeList> saveAsync()
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<MidwifeList> future = new Future<MidwifeList>();
-      Backendless.Data.of( MidwifeList.class ).save( this, future );
-
-      return future;
-    }
-  }
-
-  public void saveAsync( AsyncCallback<MidwifeList> callback )
-  {
-    Backendless.Data.of( MidwifeList.class ).save( this, callback );
-  }
-
-  public Long remove()
-  {
-    return Backendless.Data.of( MidwifeList.class ).remove( this );
-  }
-
-  public Future<Long> removeAsync()
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<Long> future = new Future<Long>();
-      Backendless.Data.of( MidwifeList.class ).remove( this, future );
-
-      return future;
-    }
-  }
-
-  public void removeAsync( AsyncCallback<Long> callback )
-  {
-    Backendless.Data.of( MidwifeList.class ).remove( this, callback );
-  }
 
   public static MidwifeList findById( String id )
   {
@@ -214,5 +113,105 @@ public class MidwifeList
   public static void findAsync(BackendlessDataQuery query, AsyncCallback<BackendlessCollection<MidwifeList>> callback )
   {
     Backendless.Data.of( MidwifeList.class ).find( query, callback );
+  }
+
+  public java.util.Date getCreated()
+  {
+    return created;
+  }
+
+  public java.util.Date getUpdated()
+  {
+    return updated;
+  }
+
+  public String getObjectId()
+  {
+    return objectId;
+  }
+
+  public String getOwnerId()
+  {
+    return ownerId;
+  }
+
+  public BlockedTime getHasBlockedTimes()
+  {
+    return hasBlockedTimes;
+  }
+
+  public void setHasBlockedTimes( BlockedTime hasBlockedTimes )
+  {
+    this.hasBlockedTimes = hasBlockedTimes;
+  }
+
+  public ServicePortfolio getHasService()
+  {
+    return hasService;
+  }
+
+  public void setHasService( ServicePortfolio hasService )
+  {
+    this.hasService = hasService;
+  }
+
+  public java.util.List<ServiceArea> getAreaOfService()
+  {
+    return areaOfService;
+  }
+
+  public void setAreaOfService( java.util.List<ServiceArea> areaOfService )
+  {
+    this.areaOfService = areaOfService;
+  }
+
+  public MidwifeList save()
+  {
+    return Backendless.Data.of( MidwifeList.class ).save( this );
+  }
+
+  public Future<MidwifeList> saveAsync()
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<MidwifeList> future = new Future<MidwifeList>();
+      Backendless.Data.of( MidwifeList.class ).save( this, future );
+
+      return future;
+    }
+  }
+
+  public void saveAsync( AsyncCallback<MidwifeList> callback )
+  {
+    Backendless.Data.of( MidwifeList.class ).save( this, callback );
+  }
+
+  public Long remove()
+  {
+    return Backendless.Data.of( MidwifeList.class ).remove( this );
+  }
+
+  public Future<Long> removeAsync()
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<Long> future = new Future<Long>();
+      Backendless.Data.of( MidwifeList.class ).remove( this, future );
+
+      return future;
+    }
+  }
+
+  public void removeAsync( AsyncCallback<Long> callback )
+  {
+    Backendless.Data.of( MidwifeList.class ).remove( this, callback );
   }
 }

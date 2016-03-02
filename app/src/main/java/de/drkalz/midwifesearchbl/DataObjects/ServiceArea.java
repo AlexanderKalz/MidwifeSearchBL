@@ -1,4 +1,4 @@
-package de.drkalz.midwifesearchbl.DataObjects;
+package de.drkalz.midwifesearchbl.dataObjects;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
@@ -14,96 +14,6 @@ public class ServiceArea
   private String objectId;
   private Double radius;
   private GeoPoint servicePoint;
-  public java.util.Date getCreated()
-  {
-    return created;
-  }
-
-  public String getOwnerId()
-  {
-    return ownerId;
-  }
-
-  public java.util.Date getUpdated()
-  {
-    return updated;
-  }
-
-  public String getObjectId()
-  {
-    return objectId;
-  }
-
-  public Double getRadius()
-  {
-    return radius;
-  }
-
-  public void setRadius( Double radius )
-  {
-    this.radius = radius;
-  }
-
-  public GeoPoint getServicePoint()
-  {
-    return servicePoint;
-  }
-
-  public void setServicePoint( GeoPoint servicePoint )
-  {
-    this.servicePoint = servicePoint;
-  }
-
-                                                    
-  public ServiceArea save()
-  {
-    return Backendless.Data.of( ServiceArea.class ).save( this );
-  }
-
-  public Future<ServiceArea> saveAsync()
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<ServiceArea> future = new Future<ServiceArea>();
-      Backendless.Data.of( ServiceArea.class ).save( this, future );
-
-      return future;
-    }
-  }
-
-  public void saveAsync( AsyncCallback<ServiceArea> callback )
-  {
-    Backendless.Data.of( ServiceArea.class ).save( this, callback );
-  }
-
-  public Long remove()
-  {
-    return Backendless.Data.of( ServiceArea.class ).remove( this );
-  }
-
-  public Future<Long> removeAsync()
-  {
-    if( Backendless.isAndroid() )
-    {
-      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
-    }
-    else
-    {
-      Future<Long> future = new Future<Long>();
-      Backendless.Data.of( ServiceArea.class ).remove( this, future );
-
-      return future;
-    }
-  }
-
-  public void removeAsync( AsyncCallback<Long> callback )
-  {
-    Backendless.Data.of( ServiceArea.class ).remove( this, callback );
-  }
 
   public static ServiceArea findById( String id )
   {
@@ -203,5 +113,95 @@ public class ServiceArea
   public static void findAsync(BackendlessDataQuery query, AsyncCallback<BackendlessCollection<ServiceArea>> callback )
   {
     Backendless.Data.of( ServiceArea.class ).find( query, callback );
+  }
+
+  public java.util.Date getCreated()
+  {
+    return created;
+  }
+
+  public String getOwnerId()
+  {
+    return ownerId;
+  }
+
+  public java.util.Date getUpdated()
+  {
+    return updated;
+  }
+
+  public String getObjectId()
+  {
+    return objectId;
+  }
+
+  public Double getRadius()
+  {
+    return radius;
+  }
+
+  public void setRadius( Double radius )
+  {
+    this.radius = radius;
+  }
+
+  public GeoPoint getServicePoint()
+  {
+    return servicePoint;
+  }
+
+  public void setServicePoint( GeoPoint servicePoint )
+  {
+    this.servicePoint = servicePoint;
+  }
+
+  public ServiceArea save()
+  {
+    return Backendless.Data.of( ServiceArea.class ).save( this );
+  }
+
+  public Future<ServiceArea> saveAsync()
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<ServiceArea> future = new Future<ServiceArea>();
+      Backendless.Data.of( ServiceArea.class ).save( this, future );
+
+      return future;
+    }
+  }
+
+  public void saveAsync( AsyncCallback<ServiceArea> callback )
+  {
+    Backendless.Data.of( ServiceArea.class ).save( this, callback );
+  }
+
+  public Long remove()
+  {
+    return Backendless.Data.of( ServiceArea.class ).remove( this );
+  }
+
+  public Future<Long> removeAsync()
+  {
+    if( Backendless.isAndroid() )
+    {
+      throw new UnsupportedOperationException( "Using this method is restricted in Android" );
+    }
+    else
+    {
+      Future<Long> future = new Future<Long>();
+      Backendless.Data.of( ServiceArea.class ).remove( this, future );
+
+      return future;
+    }
+  }
+
+  public void removeAsync( AsyncCallback<Long> callback )
+  {
+    Backendless.Data.of( ServiceArea.class ).remove( this, callback );
   }
 }

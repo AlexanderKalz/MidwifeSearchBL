@@ -17,7 +17,7 @@ import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 
-import de.drkalz.midwifesearchbl.DataObjects.UserAddress;
+import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -49,6 +49,22 @@ public class RegisterActivity extends AppCompatActivity {
         Intent i = getIntent();
         cuEmail.setText(i.getStringExtra("userEmail"));
         cuPassword.setText(i.getStringExtra("userPassword"));
+        final boolean changeData = i.getBooleanExtra("changeData", false);
+
+        if (changeData) {
+            UserAddress currentUser = sApp.getUserAddress();
+            cuFirstname.setText(currentUser.getFirstname());
+            cuName.setText(currentUser.getLastname());
+            cuStreet.setText(currentUser.getStreet());
+            cuZip.setText(Integer.toString(currentUser.getZip()));
+            cuCity.setText(currentUser.getCity());
+            cuCountry.setText(currentUser.getCountry());
+            cuTelefon.setText(currentUser.getTelefon());
+            cuMobil.setText(currentUser.getMobil());
+            cuHomepage.setText(currentUser.getHomepage());
+            cuIsMidwife.setChecked(sApp.isMidwife());
+            cuEmail.setText(sApp.getUserEmail());
+        }
 
         cuIsMidwife.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -124,33 +140,52 @@ public class RegisterActivity extends AppCompatActivity {
                     userAddress.setHomepage(cuHomepage.getText().toString());
                     user.setProperty("Address", userAddress);
 
-                    Backendless.UserService.register(user, new AsyncCallback<BackendlessUser>() {
-                        @Override
-                        public void handleResponse(BackendlessUser response) {
-                            Toast.makeText(getApplicationContext(), userAddress.getFirstname() + " " + userAddress.getLastname() + " wurde registriert!", Toast.LENGTH_LONG).show();
-                            String eMail = cuEmail.getText().toString();
-                            String passWord = cuPassword.getText().toString();
-                            Backendless.UserService.login(eMail, passWord, new AsyncCallback<BackendlessUser>() {
-                                @Override
-                                public void handleResponse(BackendlessUser response) {
-                                    Toast.makeText(getApplicationContext(), "Login erfolgreich!", Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                    i.putExtra("userToken", response.getObjectId().toString());
-                                    startActivity(i);
-                                }
+                    final String eMail = cuEmail.getText().toString();
+                    final String passWord = cuPassword.getText().toString();
+                    sApp.setUserEmail(eMail);
+                    sApp.setUserPassword(passWord);
+                    sApp.setUserAddress(userAddress);
 
-                                @Override
-                                public void handleFault(BackendlessFault fault) {
-                                    Toast.makeText(getApplicationContext(), "Der Login ging schief: \n" + fault.getMessage(), Toast.LENGTH_LONG).show();
-                                }
-                            }, true);
-                        }
+                    if (!changeData) {
+                        Backendless.UserService.register(user, new AsyncCallback<BackendlessUser>() {
+                            @Override
+                            public void handleResponse(BackendlessUser response) {
+                                Toast.makeText(getApplicationContext(), userAddress.getFirstname() + " " + userAddress.getLastname() + " wurde registriert!", Toast.LENGTH_LONG).show();
+                                sApp.setCurrentUser(response);
+                                Backendless.UserService.login(eMail, passWord, new AsyncCallback<BackendlessUser>() {
+                                    @Override
+                                    public void handleResponse(BackendlessUser response) {
+                                        Toast.makeText(getApplicationContext(), "Login erfolgreich!", Toast.LENGTH_SHORT).show();
+                                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                        startActivity(i);
+                                    }
 
-                        @Override
-                        public void handleFault(BackendlessFault fault) {
-                            Toast.makeText(getApplicationContext(), "Die Registrierung lief schief: \n" + fault.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    });
+                                    @Override
+                                    public void handleFault(BackendlessFault fault) {
+                                        Toast.makeText(getApplicationContext(), "Der Login ging schief: \n" + fault.getMessage(), Toast.LENGTH_LONG).show();
+                                    }
+                                }, true);
+                            }
+
+                            @Override
+                            public void handleFault(BackendlessFault fault) {
+                                Toast.makeText(getApplicationContext(), "Die Registrierung lief schief: \n" + fault.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else {
+                        Backendless.UserService.update(user, new AsyncCallback<BackendlessUser>() {
+                            @Override
+                            public void handleResponse(BackendlessUser response) {
+                                Toast.makeText(getApplicationContext(), sApp.getFullUserName() + " wurde aktualisiert", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void handleFault(BackendlessFault fault) {
+                                Toast.makeText(getApplicationContext(), sApp.getFullUserName()
+                                        + " nicht aktualisiert\n" + fault.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                 }
 
             }
