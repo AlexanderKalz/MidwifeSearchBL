@@ -159,10 +159,10 @@ public class MainActivity extends AppCompatActivity {
                     public void handleResponse(BackendlessUser response) {
                         Backendless.UserService.setCurrentUser(response);
                         sApp.setCurrentUser(Backendless.UserService.CurrentUser());
-                        isMidwife = (boolean) sApp.getCurrentUser().getProperty("isMidwife");
+                        isMidwife = (boolean) response.getProperty("isMidwife");
                         sApp.setMidwife(isMidwife);
-                        sApp.setUserEmail(sApp.getCurrentUser().getEmail());
-                        sApp.setUserAddress((UserAddress) sApp.getCurrentUser().getProperty("Address"));
+                        sApp.setUserEmail(response.getEmail());
+
                         Backendless.Data.of(UserAddress.class).find(userCallback);
                         if (sApp.isMidwife() == false) {
                             sApp.setMidwife(false);
