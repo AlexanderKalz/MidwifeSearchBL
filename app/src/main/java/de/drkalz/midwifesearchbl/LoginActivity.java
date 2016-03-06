@@ -11,9 +11,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.backendless.Backendless;
+import com.backendless.BackendlessCollection;
 import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.BackendlessDataQuery;
+
+import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -41,8 +45,29 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void handleResponse(BackendlessUser response) {
                         Toast.makeText(getApplicationContext(), "User ist angemeldet", Toast.LENGTH_LONG).show();
+                        sApp.setCurrentUser(response);
+                        sApp.setMidwife((boolean) response.getProperty("isMidwife"));
+                        sApp.setUserEmail(response.getEmail());
+
+                        String whereClause = "Users[Address].objectId='" + response.getObjectId() + "'";
+                        BackendlessDataQuery dataQuery = new BackendlessDataQuery();
+                        dataQuery.setWhereClause(whereClause);
+                        Backendless.Persistence.of(UserAddress.class).find(dataQuery, new AsyncCallback<BackendlessCollection<UserAddress>>() {
+                            @Override
+                            public void handleResponse(BackendlessCollection<UserAddress> response) {
+                                for (UserAddress item : response.getCurrentPage()) {
+                                    sApp.setUserAddress(item);
+                                }
+                            }
+
+                            @Override
+                            public void handleFault(BackendlessFault fault) {
+                            }
+                        });
+
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(i);
+                        finish();
                     }
 
                     @Override
@@ -63,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(i);
                                     finish();
                                 }
-
                                 break;
                             case "3006":
                                 Toast.makeText(getApplicationContext(), "Email oder Passwort eingeben!", Toast.LENGTH_LONG).show();

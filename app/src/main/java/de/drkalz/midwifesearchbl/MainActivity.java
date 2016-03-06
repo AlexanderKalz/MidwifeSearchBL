@@ -18,9 +18,8 @@ import com.backendless.BackendlessCollection;
 import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.BackendlessDataQuery;
 import com.backendless.persistence.local.UserTokenStorageFactory;
-
-import java.util.Iterator;
 
 import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
 import de.drkalz.midwifesearchbl.demand.MapRequest;
@@ -40,6 +39,25 @@ public class MainActivity extends AppCompatActivity {
     Button buLogout;
     TextView tvUser;
     StartApp sApp = StartApp.getInstance();
+
+    protected void setButtons() {
+        if (sApp.isMidwife() == false) {
+            sApp.setMidwife(false);
+            tvAbwesenheit.setText("persönliche Daten ändern");
+            tvArea.setText("Anfrage senden");
+            tvSearch.setText("Suche Hebamme");
+            tvService.setTextColor(Color.LTGRAY);
+            ibService.setVisibility(View.INVISIBLE);
+        } else {
+            sApp.setMidwife(true);
+            tvAbwesenheit.setText("Abwesenheiten planen");
+            tvArea.setText("Gebiete festlegen");
+            tvSearch.setText("Anfragen suchen");
+            tvService.setText("Serviceportfolio ändern");
+            tvService.setTextColor(Color.BLACK);
+            ibService.setVisibility(View.VISIBLE);
+        }
+    }
 
     public void doSomeAction(View view) {
 
@@ -134,22 +152,6 @@ public class MainActivity extends AppCompatActivity {
         Backendless.initApp(this, APP_KEY, API_KEY, APP_VERSION);
         sApp.setCurrentUser(Backendless.UserService.CurrentUser());
 
-        final AsyncCallback<BackendlessCollection<UserAddress>> userCallback = new AsyncCallback<BackendlessCollection<UserAddress>>() {
-            @Override
-            public void handleResponse(BackendlessCollection<UserAddress> user) {
-                Iterator<UserAddress> iterator = user.getCurrentPage().iterator();
-                while (iterator.hasNext()) {
-                    sApp.setUserAddress(iterator.next());
-                    tvUser.setText(sApp.getFullUserName());
-                }
-            }
-
-            @Override
-            public void handleFault(BackendlessFault fault) {
-
-            }
-        };
-
         if (sApp.getCurrentUser() == null) {
             final String userToken = UserTokenStorageFactory.instance().getStorage().get();
             if (userToken != null && !userToken.equals("")) {
@@ -163,23 +165,24 @@ public class MainActivity extends AppCompatActivity {
                         sApp.setMidwife(isMidwife);
                         sApp.setUserEmail(response.getEmail());
 
-                        Backendless.Data.of(UserAddress.class).find(userCallback);
-                        if (sApp.isMidwife() == false) {
-                            sApp.setMidwife(false);
-                            tvAbwesenheit.setText("persönliche Daten ändern");
-                            tvArea.setText("Anfrage senden");
-                            tvSearch.setText("Suche Hebamme");
-                            tvService.setTextColor(Color.LTGRAY);
-                            ibService.setVisibility(View.INVISIBLE);
-                        } else {
-                            sApp.setMidwife(true);
-                            tvAbwesenheit.setText("Abwesenheiten planen");
-                            tvArea.setText("Gebiete festlegen");
-                            tvSearch.setText("Anfragen suchen");
-                            tvService.setText("Serviceportfolio ändern");
-                            tvService.setTextColor(Color.BLACK);
-                            ibService.setVisibility(View.VISIBLE);
-                        }
+                        String whereClause = "Users[Address].objectId='" + response.getObjectId() + "'";
+                        BackendlessDataQuery dataQuery = new BackendlessDataQuery();
+                        dataQuery.setWhereClause(whereClause);
+                        Backendless.Persistence.of(UserAddress.class).find(dataQuery, new AsyncCallback<BackendlessCollection<UserAddress>>() {
+                            @Override
+                            public void handleResponse(BackendlessCollection<UserAddress> response) {
+                                for (UserAddress item : response.getCurrentPage()) {
+                                    sApp.setUserAddress(item);
+                                    tvUser.setText(sApp.getFullUsername());
+                                }
+                            }
+
+                            @Override
+                            public void handleFault(BackendlessFault fault) {
+                            }
+                        });
+
+                        setButtons();
                     }
                     @Override
                     public void handleFault(BackendlessFault fault) {
@@ -188,9 +191,20 @@ public class MainActivity extends AppCompatActivity {
                 });
 
             } else {
+                tvUser.setText(sApp.getFullUsername());
                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(i);
+                finish();
             }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (sApp.getCurrentUser() != null) {
+            tvUser.setText(sApp.getFullUsername());
         }
     }
 

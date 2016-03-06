@@ -17,6 +17,7 @@ public class StartApp extends Application {
     private UserAddress mUserAddress;
     private String mUserEmail;
     private String mUserPassword;
+    private String fullUsername;
 
     public static StartApp getInstance() {
         return singleInstance;
@@ -62,14 +63,18 @@ public class StartApp extends Application {
         mUserPassword = userPassword;
     }
 
-    public String getFullUserName() {
-        String fullName;
+    public String getFullUsername() {
+        this.setFullUsername(fullUsername);
+        return fullUsername;
+    }
+
+    public void setFullUsername(String fullUsername) {
         if (mUserAddress != null) {
-            fullName = mUserAddress.getFirstname() + " " + mUserAddress.getLastname();
+            fullUsername = mUserAddress.getFirstname() + " " + mUserAddress.getLastname();
         } else {
-            fullName = "not set";
+            fullUsername = "not set";
         }
-        return fullName;
+        this.fullUsername = fullUsername;
     }
 
     @Override

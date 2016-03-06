@@ -1,6 +1,8 @@
 package de.drkalz.midwifesearchbl;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,12 +18,18 @@ import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.geo.GeoPoint;
+
+import java.util.List;
 
 import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
+import de.drkalz.midwifesearchbl.demand.MapRequest;
+import de.drkalz.midwifesearchbl.offer.SetBlockedTime;
 
 public class RegisterActivity extends AppCompatActivity {
 
     final StartApp sApp = StartApp.getInstance();
+    double lat, lng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +37,6 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().hide();
 
         final Boolean[] isMidwife = {false};
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -72,7 +79,6 @@ public class RegisterActivity extends AppCompatActivity {
                 if (isChecked) {
                     isMidwife[0] = true;
                     cuIsMidwife.setText("Ja");
-
                 } else {
                     isMidwife[0] = false;
                     cuIsMidwife.setText("Nein");
@@ -120,15 +126,43 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Passwort nicht eingetragen!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    Snackbar.make(view, "Sie werden registriert!", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    BackendlessUser user;
+                    final UserAddress userAddress;
+                    if (changeData) {
+                        user = sApp.getCurrentUser();
+                        userAddress = sApp.getUserAddress();
+                    } else {
+                        user = new BackendlessUser();
+                        userAddress = new UserAddress();
+                    }
 
-                    BackendlessUser user = new BackendlessUser();
+                    // Ermittle GeoPoint für Heimadresse
+                    String geoAddresse = userAddress.getStreet() + " " +
+                            userAddress.getCity() + " " +
+                            userAddress.getCountry() + " " +
+                            userAddress.getZip();
+
+                    Geocoder geoCoder = new Geocoder(getApplicationContext());
+                    try {
+                        List<Address> addressList = geoCoder.getFromLocationName(geoAddresse, 1);
+                        if (addressList != null && addressList.size() > 0) {
+                            lat = addressList.get(0).getLatitude();
+                            lng = addressList.get(0).getLongitude();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    GeoPoint homeGeoPoint = new GeoPoint(lat, lng);
+                    //Backendless.Geo.savePoint(homeGeoPoint);
+
+                    // Setze Properties im User-Objekt
                     user.setEmail(cuEmail.getText().toString());
                     user.setPassword(cuPassword.getText().toString());
                     user.setProperty("isMidwife", isMidwife[0]);
+                    user.setProperty("homeGeoPoint", homeGeoPoint);
 
-                    final UserAddress userAddress = new UserAddress();
+                    // übernehme neue Adresse in UserAddress-Objekt
                     userAddress.setFirstname(cuFirstname.getText().toString());
                     userAddress.setLastname(cuName.getText().toString());
                     userAddress.setStreet(cuStreet.getText().toString());
@@ -140,13 +174,18 @@ public class RegisterActivity extends AppCompatActivity {
                     userAddress.setHomepage(cuHomepage.getText().toString());
                     user.setProperty("Address", userAddress);
 
+
+                    // Kopiere UserProperties und UserAddress in App-übergreifende sApp-Variablen
                     final String eMail = cuEmail.getText().toString();
                     final String passWord = cuPassword.getText().toString();
                     sApp.setUserEmail(eMail);
                     sApp.setUserPassword(passWord);
                     sApp.setUserAddress(userAddress);
+                    sApp.setMidwife(isMidwife[0]);
 
                     if (!changeData) {
+                        Snackbar.make(view, "Sie werden registriert!", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
                         Backendless.UserService.register(user, new AsyncCallback<BackendlessUser>() {
                             @Override
                             public void handleResponse(BackendlessUser response) {
@@ -156,8 +195,6 @@ public class RegisterActivity extends AppCompatActivity {
                                     @Override
                                     public void handleResponse(BackendlessUser response) {
                                         Toast.makeText(getApplicationContext(), "Login erfolgreich!", Toast.LENGTH_SHORT).show();
-                                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                        startActivity(i);
                                     }
 
                                     @Override
@@ -176,24 +213,32 @@ public class RegisterActivity extends AppCompatActivity {
                         Backendless.UserService.update(user, new AsyncCallback<BackendlessUser>() {
                             @Override
                             public void handleResponse(BackendlessUser response) {
-                                Toast.makeText(getApplicationContext(), sApp.getFullUserName() + " wurde aktualisiert", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), sApp.getFullUsername() + " wurde aktualisiert", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
                             public void handleFault(BackendlessFault fault) {
-                                Toast.makeText(getApplicationContext(), sApp.getFullUserName()
+                                Toast.makeText(getApplicationContext(), sApp.getFullUsername()
                                         + " nicht aktualisiert\n" + fault.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         });
                     }
-                }
 
+                    if (!changeData && !sApp.isMidwife()) {
+                        Intent i = new Intent(getApplicationContext(), MapRequest.class);
+                        startActivity(i);
+                        finish();
+                    } else if (!changeData && sApp.isMidwife()) {
+                        Intent i = new Intent(getApplicationContext(), SetBlockedTime.class);
+                        startActivity(i);
+                        finish();
+                    } else {
+                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+                }
             }
         });
-
     }
-
-
-
-
 }
