@@ -20,7 +20,10 @@ import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.geo.GeoPoint;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
 import de.drkalz.midwifesearchbl.demand.MapRequest;
@@ -128,20 +131,24 @@ public class RegisterActivity extends AppCompatActivity {
                 } else {
                     BackendlessUser user;
                     final UserAddress userAddress;
+                    final String geoAddresse;
                     if (changeData) {
                         user = sApp.getCurrentUser();
                         userAddress = sApp.getUserAddress();
+                        geoAddresse = userAddress.getStreet() + " " +
+                                userAddress.getCity() + " " +
+                                userAddress.getCountry() + " " +
+                                userAddress.getZip();
                     } else {
                         user = new BackendlessUser();
                         userAddress = new UserAddress();
+                        geoAddresse = cuStreet.getText().toString() + " "
+                                + cuCity.getText().toString() + " "
+                                + cuCountry.getText().toString() + " "
+                                + cuZip.getText().toString();
                     }
 
                     // Ermittle GeoPoint für Heimadresse
-                    String geoAddresse = userAddress.getStreet() + " " +
-                            userAddress.getCity() + " " +
-                            userAddress.getCountry() + " " +
-                            userAddress.getZip();
-
                     Geocoder geoCoder = new Geocoder(getApplicationContext());
                     try {
                         List<Address> addressList = geoCoder.getFromLocationName(geoAddresse, 1);
@@ -152,15 +159,30 @@ public class RegisterActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
-                    GeoPoint homeGeoPoint = new GeoPoint(lat, lng);
-                    //Backendless.Geo.savePoint(homeGeoPoint);
+                    final List<String> categories = new ArrayList<>();
+                    categories.add("homeGeoPoint");
+                    final Map<String, Object> metaData = new HashMap<>();
+                    metaData.put("userID", "");
+                    metaData.put("isMidwife", Boolean.toString(sApp.isMidwife()));
+                    GeoPoint homeGeoPoint = new GeoPoint(lat, lng, categories, metaData);
 
                     // Setze Properties im User-Objekt
                     user.setEmail(cuEmail.getText().toString());
                     user.setPassword(cuPassword.getText().toString());
                     user.setProperty("isMidwife", isMidwife[0]);
                     user.setProperty("homeGeoPoint", homeGeoPoint);
+
+                    Backendless.Geo.savePoint(homeGeoPoint, new AsyncCallback<GeoPoint>() {
+                        @Override
+                        public void handleResponse(GeoPoint response) {
+                            sApp.setHomeGeoPointId(response.getObjectId());
+                        }
+
+                        @Override
+                        public void handleFault(BackendlessFault fault) {
+
+                        }
+                    });
 
                     // übernehme neue Adresse in UserAddress-Objekt
                     userAddress.setFirstname(cuFirstname.getText().toString());
@@ -173,7 +195,6 @@ public class RegisterActivity extends AppCompatActivity {
                     userAddress.setMobil(cuMobil.getText().toString());
                     userAddress.setHomepage(cuHomepage.getText().toString());
                     user.setProperty("Address", userAddress);
-
 
                     // Kopiere UserProperties und UserAddress in App-übergreifende sApp-Variablen
                     final String eMail = cuEmail.getText().toString();
@@ -191,6 +212,7 @@ public class RegisterActivity extends AppCompatActivity {
                             public void handleResponse(BackendlessUser response) {
                                 Toast.makeText(getApplicationContext(), userAddress.getFirstname() + " " + userAddress.getLastname() + " wurde registriert!", Toast.LENGTH_LONG).show();
                                 sApp.setCurrentUser(response);
+
                                 Backendless.UserService.login(eMail, passWord, new AsyncCallback<BackendlessUser>() {
                                     @Override
                                     public void handleResponse(BackendlessUser response) {

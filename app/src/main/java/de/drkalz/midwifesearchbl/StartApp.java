@@ -18,9 +18,18 @@ public class StartApp extends Application {
     private String mUserEmail;
     private String mUserPassword;
     private String fullUsername;
+    private String homeGeoPointId;
 
     public static StartApp getInstance() {
         return singleInstance;
+    }
+
+    public String getHomeGeoPointId() {
+        return homeGeoPointId;
+    }
+
+    public void setHomeGeoPointId(String homeGeoPointId) {
+        this.homeGeoPointId = homeGeoPointId;
     }
 
     public boolean isMidwife() {
