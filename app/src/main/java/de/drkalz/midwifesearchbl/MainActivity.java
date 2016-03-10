@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
             case 3:
                 if (sApp.isMidwife()) {
                     Intent intent = new Intent(MainActivity.this, ServiceActivity.class);
-                    intent.putExtra("userUID", sApp.getCurrentUser().getObjectId());
                     startActivity(intent);
                     finish();
                 } else {

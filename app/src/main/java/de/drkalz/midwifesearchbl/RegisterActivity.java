@@ -27,7 +27,7 @@ import java.util.Map;
 
 import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
 import de.drkalz.midwifesearchbl.demand.MapRequest;
-import de.drkalz.midwifesearchbl.offer.SetBlockedTime;
+import de.drkalz.midwifesearchbl.offer.ServiceActivity;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -251,7 +251,7 @@ public class RegisterActivity extends AppCompatActivity {
                         startActivity(i);
                         finish();
                     } else if (!changeData && sApp.isMidwife()) {
-                        Intent i = new Intent(getApplicationContext(), SetBlockedTime.class);
+                        Intent i = new Intent(getApplicationContext(), ServiceActivity.class);
                         startActivity(i);
                         finish();
                     } else {
