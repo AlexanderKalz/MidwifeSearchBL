@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     StartApp sApp = StartApp.getInstance();
 
     protected void setButtons() {
-        if (sApp.isMidwife() == false) {
+        if (!sApp.isMidwife()) {
             sApp.setMidwife(false);
             tvAbwesenheit.setText("persönliche Daten ändern");
             tvArea.setText("Anfrage senden");
@@ -67,12 +67,10 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 if (sApp.isMidwife()) {
                     Intent intent = new Intent(MainActivity.this, SetBlockedTime.class);
-                    intent.putExtra("userUID", sApp.getCurrentUser().getObjectId());
                     startActivity(intent);
                     finish();
                 } else {
                     Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-                    intent.putExtra("userUID", sApp.getCurrentUser().getObjectId());
                     intent.putExtra("userPassword", sApp.getUserPassword());
                     intent.putExtra("changeData", true);
                     startActivity(intent);
@@ -82,12 +80,10 @@ public class MainActivity extends AppCompatActivity {
             case 2:
                 if (sApp.isMidwife()) {
                     Intent intent = new Intent(MainActivity.this, MidwifeArea.class);
-                    intent.putExtra("userUID", sApp.getCurrentUser().getObjectId());
                     startActivity(intent);
                     finish();
                 } else {
                     Intent intent = new Intent(MainActivity.this, MapRequest.class);
-                    intent.putExtra("userUID", sApp.getCurrentUser().getObjectId());
                     startActivity(intent);
                     finish();
                 }
@@ -119,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                         sApp.setUserEmail("");
                         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(intent);
+                        finish();
                     }
 
                     @Override
@@ -146,10 +143,10 @@ public class MainActivity extends AppCompatActivity {
         tvService = (TextView) findViewById(R.id.tv_Service);
         tvSearch = (TextView) findViewById(R.id.tv_Search);
         tvUser = (TextView) findViewById(R.id.tv_User);
-        sApp.setMidwife(false);
 
         Backendless.initApp(this, APP_KEY, API_KEY, APP_VERSION);
         sApp.setCurrentUser(Backendless.UserService.CurrentUser());
+        tvUser.setText(sApp.getFullUsername());
 
         if (sApp.getCurrentUser() == null) {
             final String userToken = UserTokenStorageFactory.instance().getStorage().get();
@@ -180,7 +177,6 @@ public class MainActivity extends AppCompatActivity {
                             public void handleFault(BackendlessFault fault) {
                             }
                         });
-
                         setButtons();
                     }
                     @Override
