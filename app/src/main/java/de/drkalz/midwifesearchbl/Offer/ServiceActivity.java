@@ -15,6 +15,9 @@ import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.BackendlessDataQuery;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 import de.drkalz.midwifesearchbl.MainActivity;
 import de.drkalz.midwifesearchbl.R;
 import de.drkalz.midwifesearchbl.StartApp;
@@ -22,7 +25,9 @@ import de.drkalz.midwifesearchbl.dataObjects.ServicePortfolio;
 
 public class ServiceActivity extends AppCompatActivity {
 
+
     final StartApp sApp = StartApp.getInstance();
+    final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMAN);
     ServicePortfolio cuSerPort;
 
     @Override
@@ -42,6 +47,8 @@ public class ServiceActivity extends AppCompatActivity {
         final CheckBox cb_french = (CheckBox) findViewById(R.id.cb_french);
         final CheckBox cb_spanish = (CheckBox) findViewById(R.id.cb_spanish);
         final CheckBox cb_german = (CheckBox) findViewById(R.id.cb_german);
+
+        cuSerPort = new ServicePortfolio();
 
         String whereClause = "Users[hasService].objectId='" + sApp.getCurrentUser().getObjectId() + "'";
         BackendlessDataQuery dataQuery = new BackendlessDataQuery();

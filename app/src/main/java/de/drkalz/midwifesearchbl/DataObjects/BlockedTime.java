@@ -13,8 +13,9 @@ public class BlockedTime
   private java.util.Date endOfBlock;
   private String ownerId;
   private java.util.Date startOfBlock;
+  private String midwifeID;
 
-  public static BlockedTime findById( String id )
+  public static BlockedTime findById(String id)
   {
     return Backendless.Data.of( BlockedTime.class ).findById( id );
   }
@@ -27,32 +28,29 @@ public class BlockedTime
     }
     else
     {
-      Future<BlockedTime> future = new Future<BlockedTime>();
+      Future<BlockedTime> future = new Future<>();
       Backendless.Data.of( BlockedTime.class ).findById( id, future );
 
       return future;
     }
   }
 
-  public static void findByIdAsync( String id, AsyncCallback<BlockedTime> callback )
-  {
+  public static void findByIdAsync(String id, AsyncCallback<BlockedTime> callback) {
     Backendless.Data.of( BlockedTime.class ).findById( id, callback );
   }
 
-  public static BlockedTime findFirst()
-  {
+  public static BlockedTime findFirst() {
     return Backendless.Data.of( BlockedTime.class ).findFirst();
   }
 
-  public static Future<BlockedTime> findFirstAsync()
-  {
+  public static Future<BlockedTime> findFirstAsync() {
     if( Backendless.isAndroid() )
     {
       throw new UnsupportedOperationException( "Using this method is restricted in Android" );
     }
     else
     {
-      Future<BlockedTime> future = new Future<BlockedTime>();
+      Future<BlockedTime> future = new Future<>();
       Backendless.Data.of( BlockedTime.class ).findFirst( future );
 
       return future;
@@ -64,54 +62,56 @@ public class BlockedTime
     Backendless.Data.of( BlockedTime.class ).findFirst( callback );
   }
 
-  public static BlockedTime findLast()
-  {
+  public static BlockedTime findLast() {
     return Backendless.Data.of( BlockedTime.class ).findLast();
   }
 
-  public static Future<BlockedTime> findLastAsync()
-  {
+  public static Future<BlockedTime> findLastAsync() {
     if( Backendless.isAndroid() )
     {
       throw new UnsupportedOperationException( "Using this method is restricted in Android" );
     }
     else
     {
-      Future<BlockedTime> future = new Future<BlockedTime>();
+      Future<BlockedTime> future = new Future<>();
       Backendless.Data.of( BlockedTime.class ).findLast( future );
 
       return future;
     }
   }
 
-  public static void findLastAsync( AsyncCallback<BlockedTime> callback )
-  {
+  public static void findLastAsync(AsyncCallback<BlockedTime> callback) {
     Backendless.Data.of( BlockedTime.class ).findLast( callback );
   }
 
-  public static BackendlessCollection<BlockedTime> find(BackendlessDataQuery query )
-  {
+  public static BackendlessCollection<BlockedTime> find(BackendlessDataQuery query) {
     return Backendless.Data.of( BlockedTime.class ).find( query );
   }
 
-  public static Future<BackendlessCollection<BlockedTime>> findAsync(BackendlessDataQuery query )
-  {
+  public static Future<BackendlessCollection<BlockedTime>> findAsync(BackendlessDataQuery query) {
     if( Backendless.isAndroid() )
     {
       throw new UnsupportedOperationException( "Using this method is restricted in Android" );
     }
     else
     {
-      Future<BackendlessCollection<BlockedTime>> future = new Future<BackendlessCollection<BlockedTime>>();
+      Future<BackendlessCollection<BlockedTime>> future = new Future<>();
       Backendless.Data.of( BlockedTime.class ).find( query, future );
 
       return future;
     }
   }
 
-  public static void findAsync(BackendlessDataQuery query, AsyncCallback<BackendlessCollection<BlockedTime>> callback )
-  {
+  public static void findAsync(BackendlessDataQuery query, AsyncCallback<BackendlessCollection<BlockedTime>> callback) {
     Backendless.Data.of( BlockedTime.class ).find( query, callback );
+  }
+
+  public String getMidwifeID() {
+    return midwifeID;
+  }
+
+  public void setMidwifeID(String midwifeID) {
+    this.midwifeID = midwifeID;
   }
 
   public java.util.Date getUpdated()
@@ -122,6 +122,10 @@ public class BlockedTime
   public String getObjectId()
   {
     return objectId;
+  }
+
+  public void setObjectId(String objectId) {
+    this.objectId = objectId;
   }
 
   public java.util.Date getCreated()
@@ -159,23 +163,21 @@ public class BlockedTime
     return Backendless.Data.of( BlockedTime.class ).save( this );
   }
 
-  public Future<BlockedTime> saveAsync()
-  {
+  public Future<BlockedTime> saveAsync() {
     if( Backendless.isAndroid() )
     {
       throw new UnsupportedOperationException( "Using this method is restricted in Android" );
     }
     else
     {
-      Future<BlockedTime> future = new Future<BlockedTime>();
+      Future<BlockedTime> future = new Future<>();
       Backendless.Data.of( BlockedTime.class ).save( this, future );
 
       return future;
     }
   }
 
-  public void saveAsync( AsyncCallback<BlockedTime> callback )
-  {
+  public void saveAsync(AsyncCallback<BlockedTime> callback) {
     Backendless.Data.of( BlockedTime.class ).save( this, callback );
   }
 
@@ -184,23 +186,21 @@ public class BlockedTime
     return Backendless.Data.of( BlockedTime.class ).remove( this );
   }
 
-  public Future<Long> removeAsync()
-  {
+  public Future<Long> removeAsync() {
     if( Backendless.isAndroid() )
     {
       throw new UnsupportedOperationException( "Using this method is restricted in Android" );
     }
     else
     {
-      Future<Long> future = new Future<Long>();
+      Future<Long> future = new Future<>();
       Backendless.Data.of( BlockedTime.class ).remove( this, future );
 
       return future;
     }
   }
 
-  public void removeAsync( AsyncCallback<Long> callback )
-  {
+  public void removeAsync(AsyncCallback<Long> callback) {
     Backendless.Data.of( BlockedTime.class ).remove( this, callback );
   }
 }
