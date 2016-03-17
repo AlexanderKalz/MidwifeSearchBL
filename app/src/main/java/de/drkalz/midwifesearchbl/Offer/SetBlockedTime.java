@@ -85,14 +85,43 @@ public class SetBlockedTime extends AppCompatActivity {
         newBlock.setStartOfBlock(startOfBlock);
         newBlock.setEndOfBlock(endOfBlock);
         newBlock.setMidwifeID(sApp.getCurrentUser().getObjectId());
-        savedList.add(newBlock);
-        BackendlessUser saveMidwifePortfolio = sApp.getCurrentUser();
-        saveMidwifePortfolio.setProperty("setBlockedTime", savedList);
 
         switch (toDo) {
             // Create item
             case 1:
-                Backendless.UserService.update(saveMidwifePortfolio, new AsyncCallback<BackendlessUser>() {
+                savedList.add(newBlock);
+                String whereClause = "midwifeID='" + sApp.getCurrentUser().getObjectId() + "'";
+                BackendlessDataQuery dataQuery = new BackendlessDataQuery();
+                dataQuery.setWhereClause(whereClause);
+                Backendless.Persistence.of(BlockedTime.class).find(dataQuery, new AsyncCallback<BackendlessCollection<BlockedTime>>() {
+                    @Override
+                    public void handleResponse(BackendlessCollection<BlockedTime> response) {
+                        if (response != null) {
+                            for (BlockedTime toDelete : response.getCurrentPage()) {
+                                Backendless.Persistence.of(BlockedTime.class).remove(toDelete, new AsyncCallback<Long>() {
+                                    @Override
+                                    public void handleResponse(Long response) {
+
+                                    }
+
+                                    @Override
+                                    public void handleFault(BackendlessFault fault) {
+
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void handleFault(BackendlessFault fault) {
+                        Toast.makeText(getApplication(), fault.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                BackendlessUser saveMidwifePortfolio = sApp.getCurrentUser();
+                saveMidwifePortfolio.setProperty("setBlockedTime", savedList);
+                Backendless.Persistence.save(saveMidwifePortfolio, new AsyncCallback<BackendlessUser>() {
                     @Override
                     public void handleResponse(BackendlessUser response) {
                         Toast.makeText(getApplicationContext(), "Block wurde gespeichert", Toast.LENGTH_LONG).show();
@@ -115,6 +144,8 @@ public class SetBlockedTime extends AppCompatActivity {
                     public void handleResponse(BlockedTime response) {
                         Toast.makeText(getApplicationContext(), "Block wurde aktualisiert", Toast.LENGTH_LONG).show();
                         savedBlock.set(positionOfItem, "Start: " + sdf.format(startOfBlock) + " - Ende: " + sdf.format(endOfBlock));
+                        savedList.get(positionOfItem).setStartOfBlock(startOfBlock);
+                        savedList.get(positionOfItem).setEndOfBlock(endOfBlock);
                         arrayAdapter.notifyDataSetChanged();
                     }
 
@@ -180,6 +211,7 @@ public class SetBlockedTime extends AppCompatActivity {
                     savedBlock.clear();
                     savedList.clear();
                 }
+                arrayAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -187,33 +219,20 @@ public class SetBlockedTime extends AppCompatActivity {
             }
         });
 
-        arrayAdapter.notifyDataSetChanged();
-
         showBlockedDates.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-
-                Backendless.Persistence.of(BlockedTime.class).findById(savedList.get(position).getObjectId(), new AsyncCallback<BlockedTime>() {
-                    @Override
-                    public void handleResponse(BlockedTime response) {
-                        startOfBlock = response.getStartOfBlock();
-                        endOfBlock = response.getEndOfBlock();
-                        startDate.setText(sdf.format(startOfBlock));
-                        stopDate.setText(sdf.format(endOfBlock));
-                        headline.setVisibility(View.INVISIBLE);
-                        startDate.setVisibility(View.VISIBLE);
-                        stopDate.setVisibility(View.VISIBLE);
-                        addBlock.setVisibility(View.INVISIBLE);
-                        saveButton.setVisibility(View.VISIBLE);
-                        addItem = false;
-                        positionOfItem = position;
-                    }
-
-                    @Override
-                    public void handleFault(BackendlessFault fault) {
-
-                    }
-                });
+                startOfBlock = savedList.get(position).getStartOfBlock();
+                endOfBlock = savedList.get(position).getEndOfBlock();
+                startDate.setText(sdf.format(startOfBlock));
+                stopDate.setText(sdf.format(endOfBlock));
+                headline.setVisibility(View.INVISIBLE);
+                startDate.setVisibility(View.VISIBLE);
+                stopDate.setVisibility(View.VISIBLE);
+                addBlock.setVisibility(View.INVISIBLE);
+                saveButton.setVisibility(View.VISIBLE);
+                addItem = false;
+                positionOfItem = position;
             }
         });
 
@@ -222,7 +241,6 @@ public class SetBlockedTime extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 positionOfItem = position;
                 updateDatabase(3);
-                arrayAdapter.notifyDataSetChanged();
                 return true;
             }
         });

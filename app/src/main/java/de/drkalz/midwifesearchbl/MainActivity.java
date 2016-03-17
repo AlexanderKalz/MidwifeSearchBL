@@ -146,7 +146,9 @@ public class MainActivity extends AppCompatActivity {
 
         Backendless.initApp(this, APP_KEY, API_KEY, APP_VERSION);
         sApp.setCurrentUser(Backendless.UserService.CurrentUser());
-        tvUser.setText(sApp.getFullUsername());
+
+        Intent i = getIntent();
+        tvUser.setText(i.getStringExtra("fullname"));
 
         if (sApp.getCurrentUser() == null) {
             final String userToken = UserTokenStorageFactory.instance().getStorage().get();
@@ -184,24 +186,23 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), fault.getDetail(), Toast.LENGTH_LONG).show();
                     }
                 });
-
             } else {
                 tvUser.setText(sApp.getFullUsername());
-                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(i);
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
                 finish();
             }
         }
     }
 
-    @Override
+/*    @Override
     protected void onResume() {
         super.onResume();
 
         if (sApp.getCurrentUser() != null) {
             tvUser.setText(sApp.getFullUsername());
         }
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

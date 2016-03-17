@@ -57,6 +57,10 @@ public class LoginActivity extends AppCompatActivity {
                             public void handleResponse(BackendlessCollection<UserAddress> response) {
                                 for (UserAddress item : response.getCurrentPage()) {
                                     sApp.setUserAddress(item);
+                                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                    i.putExtra("fullname", sApp.getFullUsername());
+                                    startActivity(i);
+                                    finish();
                                 }
                             }
 
@@ -64,10 +68,6 @@ public class LoginActivity extends AppCompatActivity {
                             public void handleFault(BackendlessFault fault) {
                             }
                         });
-
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(i);
-                        finish();
                     }
 
                     @Override

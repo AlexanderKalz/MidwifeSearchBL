@@ -162,27 +162,27 @@ public class RegisterActivity extends AppCompatActivity {
                     final List<String> categories = new ArrayList<>();
                     categories.add("homeGeoPoint");
                     final Map<String, Object> metaData = new HashMap<>();
-                    metaData.put("userID", "");
+                    // metaData.put("userID", "");
                     metaData.put("isMidwife", Boolean.toString(sApp.isMidwife()));
-                    GeoPoint homeGeoPoint = new GeoPoint(lat, lng, categories, metaData);
+                    final GeoPoint homeGeoPoint = new GeoPoint(lat, lng, categories, metaData);
+
+                    /*Backendless.Geo.savePoint(homeGeoPoint, new AsyncCallback<GeoPoint>() {
+                        @Override
+                        public void handleResponse(GeoPoint response) {
+                            sApp.setHomeGeoPointId(response.getObjectId());
+                            homeGeoPoint.setObjectId(response.getObjectId());
+                        }
+
+                        @Override
+                        public void handleFault(BackendlessFault fault) {
+                        }
+                    });*/
 
                     // Setze Properties im User-Objekt
                     user.setEmail(cuEmail.getText().toString());
                     user.setPassword(cuPassword.getText().toString());
                     user.setProperty("isMidwife", isMidwife[0]);
                     user.setProperty("homeGeoPoint", homeGeoPoint);
-
-                    Backendless.Geo.savePoint(homeGeoPoint, new AsyncCallback<GeoPoint>() {
-                        @Override
-                        public void handleResponse(GeoPoint response) {
-                            sApp.setHomeGeoPointId(response.getObjectId());
-                        }
-
-                        @Override
-                        public void handleFault(BackendlessFault fault) {
-
-                        }
-                    });
 
                     // übernehme neue Adresse in UserAddress-Objekt
                     userAddress.setFirstname(cuFirstname.getText().toString());
@@ -196,7 +196,7 @@ public class RegisterActivity extends AppCompatActivity {
                     userAddress.setHomepage(cuHomepage.getText().toString());
                     user.setProperty("Address", userAddress);
 
-                    // Kopiere UserProperties und UserAddress in App-übergreifende sApp-Variablen
+                    // Kopiere UserProperties und UserAddress in Activity-übergreifende sApp-Variablen
                     final String eMail = cuEmail.getText().toString();
                     final String passWord = cuPassword.getText().toString();
                     sApp.setUserEmail(eMail);
