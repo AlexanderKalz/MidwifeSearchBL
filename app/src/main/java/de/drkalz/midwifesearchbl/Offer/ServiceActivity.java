@@ -50,7 +50,7 @@ public class ServiceActivity extends AppCompatActivity {
 
         cuSerPort = new ServicePortfolio();
 
-        String whereClause = "Users[hasService].objectId='" + sApp.getCurrentUser().getObjectId() + "'";
+        String whereClause = "Users[hasService].objectId='" + sApp.getUserID() + "'";
         BackendlessDataQuery dataQuery = new BackendlessDataQuery();
         dataQuery.setWhereClause(whereClause);
         Backendless.Persistence.of(ServicePortfolio.class).find(dataQuery, new AsyncCallback<BackendlessCollection<ServicePortfolio>>() {

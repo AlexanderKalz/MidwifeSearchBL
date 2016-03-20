@@ -48,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
                         sApp.setCurrentUser(response);
                         sApp.setMidwife((boolean) response.getProperty("isMidwife"));
                         sApp.setUserEmail(response.getEmail());
+                        sApp.setUserID(response.getUserId());
 
                         String whereClause = "Users[Address].objectId='" + response.getObjectId() + "'";
                         BackendlessDataQuery dataQuery = new BackendlessDataQuery();

@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
-import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.BackendlessDataQuery;
@@ -81,7 +80,7 @@ public class SetBlockedTime extends AppCompatActivity {
 
     private void updateDatabase(int toDo) {
 
-        BlockedTime newBlock = new BlockedTime();
+        final BlockedTime newBlock = new BlockedTime();
         newBlock.setStartOfBlock(startOfBlock);
         newBlock.setEndOfBlock(endOfBlock);
         newBlock.setMidwifeID(sApp.getCurrentUser().getObjectId());
@@ -90,43 +89,13 @@ public class SetBlockedTime extends AppCompatActivity {
             // Create item
             case 1:
                 savedList.add(newBlock);
-                String whereClause = "midwifeID='" + sApp.getCurrentUser().getObjectId() + "'";
-                BackendlessDataQuery dataQuery = new BackendlessDataQuery();
-                dataQuery.setWhereClause(whereClause);
-                Backendless.Persistence.of(BlockedTime.class).find(dataQuery, new AsyncCallback<BackendlessCollection<BlockedTime>>() {
+                Backendless.Persistence.save(newBlock, new AsyncCallback<BlockedTime>() {
                     @Override
-                    public void handleResponse(BackendlessCollection<BlockedTime> response) {
-                        if (response != null) {
-                            for (BlockedTime toDelete : response.getCurrentPage()) {
-                                Backendless.Persistence.of(BlockedTime.class).remove(toDelete, new AsyncCallback<Long>() {
-                                    @Override
-                                    public void handleResponse(Long response) {
-
-                                    }
-
-                                    @Override
-                                    public void handleFault(BackendlessFault fault) {
-
-                                    }
-                                });
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void handleFault(BackendlessFault fault) {
-                        Toast.makeText(getApplication(), fault.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                BackendlessUser saveMidwifePortfolio = sApp.getCurrentUser();
-                saveMidwifePortfolio.setProperty("setBlockedTime", savedList);
-                Backendless.Persistence.save(saveMidwifePortfolio, new AsyncCallback<BackendlessUser>() {
-                    @Override
-                    public void handleResponse(BackendlessUser response) {
-                        Toast.makeText(getApplicationContext(), "Block wurde gespeichert", Toast.LENGTH_LONG).show();
+                    public void handleResponse(BlockedTime response) {
+                        savedList.get(savedList.indexOf(newBlock)).setObjectId(response.getObjectId());
                         savedBlock.add("Start: " + sdf.format(startOfBlock) + " - Ende: " + sdf.format(endOfBlock));
                         arrayAdapter.notifyDataSetChanged();
+                        Toast.makeText(getApplicationContext(), "Block wurde gespeichert", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -196,7 +165,7 @@ public class SetBlockedTime extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, savedBlock);
         showBlockedDates.setAdapter(arrayAdapter);
 
-        String whereClause = "Users[setBlockedTime].objectId='" + sApp.getCurrentUser().getObjectId() + "'";
+        String whereClause = "midwifeID='" + sApp.getCurrentUser().getObjectId() + "'";
         BackendlessDataQuery dataQuery = new BackendlessDataQuery();
         dataQuery.setWhereClause(whereClause);
         Backendless.Persistence.of(BlockedTime.class).find(dataQuery, new AsyncCallback<BackendlessCollection<BlockedTime>>() {

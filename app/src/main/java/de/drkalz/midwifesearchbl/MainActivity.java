@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     public final String APP_KEY = "FB722433-CE7D-F7A1-FF00-4A5A61834900";
     public final String API_KEY = "5E881F51-12A2-A115-FFA1-C2120C3B0B00";
     public final String APP_VERSION ="v1";
-    public String currentUserId;
     public boolean isMidwife;
     ImageButton ibArea, ibTime, ibService, ibSearch;
     TextView tvAbwesenheit, tvArea, tvService, tvSearch;
@@ -153,8 +152,8 @@ public class MainActivity extends AppCompatActivity {
         if (sApp.getCurrentUser() == null) {
             final String userToken = UserTokenStorageFactory.instance().getStorage().get();
             if (userToken != null && !userToken.equals("")) {
-                currentUserId = Backendless.UserService.loggedInUser();
-                Backendless.UserService.findById(currentUserId, new AsyncCallback<BackendlessUser>() {
+                sApp.setUserID(Backendless.UserService.loggedInUser());
+                Backendless.UserService.findById(sApp.getUserID(), new AsyncCallback<BackendlessUser>() {
                     @Override
                     public void handleResponse(BackendlessUser response) {
                         Backendless.UserService.setCurrentUser(response);

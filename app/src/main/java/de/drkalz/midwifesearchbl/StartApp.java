@@ -15,6 +15,7 @@ public class StartApp extends Application {
     private boolean isMidwife;
     private BackendlessUser mCurrentUser;
     private UserAddress mUserAddress;
+    private String userID;
     private String mUserEmail;
     private String mUserPassword;
     private String fullUsername;
@@ -22,6 +23,14 @@ public class StartApp extends Application {
 
     public static StartApp getInstance() {
         return singleInstance;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     public String getHomeGeoPointId() {

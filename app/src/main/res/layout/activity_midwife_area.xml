@@ -1,248 +1,50 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:weightSum="100">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="50"
+        android:layout_margin="5dp"
+        tools:context=".offer.MidwifeArea" />
+
+    <LinearLayout
+        android:id="@+id/ll_Radius"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal"
-        android:weightSum="5">
+        android:padding="5dp"
+        android:visibility="invisible">
 
-        <ListView
-            android:id="@+id/lv_Streets"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginBottom="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="60dp"
-            android:layout_marginTop="30dp"
-            android:visibility="visible"/>
-
-        <ImageButton
-            android:id="@+id/ib_addArea"
+        <TextView
+            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center"
-            android:src="@android:drawable/ic_menu_add"
-            android:tag="1"
-            android:visibility="visible"/>
+            android:padding="5dp"
+            android:text="Bitte Radius eingeben:"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/ib_saveArea"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/tv_Radius"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center"
-            android:src="@android:drawable/ic_menu_save"
-            android:tag="2"
-            android:visibility="invisible"/>
+            android:ems="10"
+            android:inputType="number"
+            android:padding="5dp"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-        <GridLayout
-            android:id="@+id/gl_Area"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_toEndOf="@+id/lv_Streets"
-            android:layout_weight="2"
-            android:columnCount="3"
-            android:rowCount="5"
-            android:visibility="invisible">
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_streetOfArea"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_row="0"
-                android:text="@string/tvstrasse"
-                android:textColor="#000000"
-                android:textSize="16sp"/>
 
-            <EditText
-                android:id="@+id/et_streetOfArea"
-                android:layout_width="284dp"
-                android:layout_height="wrap_content"
-                android:layout_column="2"
-                android:layout_marginTop="10dp"
-                android:layout_row="0"
-                android:ems="10"
-                android:inputType="textPostalAddress"
-                android:textColor="#0400ff"
-                android:textSize="16sp"
-                android:typeface="monospace"/>
-
-            <TextView
-                android:id="@+id/tv_cityOfArea"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_row="1"
-                android:text="Stadt:"
-                android:textColor="#000000"
-                android:textSize="16sp"/>
-
-            <EditText
-                android:id="@+id/et_cityOfArea"
-                android:layout_width="281dp"
-                android:layout_height="wrap_content"
-                android:layout_column="2"
-                android:layout_marginTop="10dp"
-                android:layout_row="1"
-                android:ems="10"
-                android:inputType="textPostalAddress"
-                android:textColor="#0400ff"
-                android:textSize="16sp"
-                android:typeface="monospace"/>
-
-            <TextView
-                android:id="@+id/tv_countryOfArea"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_row="2"
-                android:text="Land:"
-                android:textColor="#000000"
-                android:textSize="16sp"/>
-
-            <EditText
-                android:id="@+id/et_countryOfArea"
-                android:layout_width="279dp"
-                android:layout_height="wrap_content"
-                android:layout_column="2"
-                android:layout_marginTop="10dp"
-                android:layout_row="2"
-                android:ems="10"
-                android:inputType="textPostalAddress"
-                android:textColor="#0400ff"
-                android:textSize="16sp"
-                android:typeface="monospace"/>
-
-            <TextView
-                android:id="@+id/tv_zipOfArea"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_row="3"
-                android:text="PLZ:"
-                android:textColor="#000000"
-                android:textSize="16sp"/>
-
-            <EditText
-                android:id="@+id/et_zipOfArea"
-                android:layout_width="280dp"
-                android:layout_height="wrap_content"
-                android:layout_column="2"
-                android:layout_marginTop="10dp"
-                android:layout_row="3"
-                android:ems="10"
-                android:inputType="textPostalAddress"
-                android:textColor="#0400ff"
-                android:textSize="16sp"
-                android:typeface="monospace"/>
-
-            <TextView
-                android:id="@+id/tv_radius"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_row="4"
-                android:text="Radius"
-                android:textColor="#000000"
-                android:textSize="16sp"/>
-
-            <EditText
-                android:id="@+id/et_radius"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="2"
-                android:layout_marginTop="10dp"
-                android:layout_row="4"
-                android:ems="10"
-                android:inputType="number"
-                android:textColor="#0400ff"
-                android:textSize="16sp"
-                android:typeface="monospace"/>
-
-        </GridLayout>
-
-        <RelativeLayout
-            android:id="@+id/rl_ChangeDeleteArea"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="50"
-            android:orientation="horizontal"
-            android:visibility="invisible"
-            android:weightSum="5">
-
-            <TextView
-                android:id="@+id/tv_ChangeDeleteArea"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="30dp"
-                android:text="Möchten Sie den Eintrag endgültig löschen?"
-                android:textAlignment="center"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
-
-            <Button
-                android:id="@+id/bu_ChangeArea"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/tv_ChangeDeleteArea"
-                android:layout_marginStart="40dp"
-                android:layout_marginTop="34dp"
-                android:nestedScrollingEnabled="true"
-                android:onClick="deleteArea"
-                android:tag="20"
-                android:text="Löschen"/>
-
-            <Button
-                android:id="@+id/bu_DelteArea"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/bu_ChangeArea"
-                android:layout_alignEnd="@+id/tv_ChangeDeleteArea"
-                android:onClick="deleteArea"
-                android:tag="21"
-                android:text="Abbrechen"/>
-        </RelativeLayout>
-
-    </RelativeLayout>
-
-    <fragment android:id="@+id/map"
-              android:name="com.google.android.gms.maps.SupportMapFragment"
-              xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_weight="50"
-              tools:context=".Midwifes.MidwifeArea"/>
-
-</LinearLayout>
+</RelativeLayout>

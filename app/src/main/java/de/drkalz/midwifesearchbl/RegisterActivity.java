@@ -20,10 +20,7 @@ import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.geo.GeoPoint;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
 import de.drkalz.midwifesearchbl.demand.MapRequest;
@@ -56,10 +53,10 @@ public class RegisterActivity extends AppCompatActivity {
         final EditText cuPassword = (EditText) findViewById(R.id.et_password);
         final Switch cuIsMidwife = (Switch) findViewById(R.id.sw_isMidwife);
 
-        Intent i = getIntent();
-        cuEmail.setText(i.getStringExtra("userEmail"));
-        cuPassword.setText(i.getStringExtra("userPassword"));
-        final boolean changeData = i.getBooleanExtra("changeData", false);
+        Intent intent = getIntent();
+        cuEmail.setText(intent.getStringExtra("userEmail"));
+        cuPassword.setText(intent.getStringExtra("userPassword"));
+        final boolean changeData = intent.getBooleanExtra("changeData", false);
 
         if (changeData) {
             UserAddress currentUser = sApp.getUserAddress();
@@ -94,39 +91,39 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (cuFirstname.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Vorname nicht eingetragen!", Toast.LENGTH_SHORT).show();
+                    cuFirstname.setError("Vorname eingeben");
                     return;
                 }
                 if (cuName.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Nachname nicht eingetragen!", Toast.LENGTH_SHORT).show();
+                    cuName.setError("Nachname eingeben");
                     return;
                 }
                 if (cuStreet.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Straße nicht eingetragen!", Toast.LENGTH_SHORT).show();
+                    cuStreet.setError("Straße + Hausnummer eingeben");
                     return;
                 }
                 if (cuCity.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Stadt nicht eingetragen!", Toast.LENGTH_SHORT).show();
+                    cuCity.setError("Wohnort eingeben");
                     return;
                 }
                 if (cuCountry.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Land nicht eingetragen!", Toast.LENGTH_SHORT).show();
+                    cuCountry.setError("Heimantland angeben");
                     return;
                 }
                 if (cuZip.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Postleitzahl nicht eingetragen!", Toast.LENGTH_SHORT).show();
+                    cuZip.setError("Postleitzahl eingeben");
                     return;
                 }
                 if (cuTelefon.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Festnetz nicht eingetragen!", Toast.LENGTH_SHORT).show();
+                    cuTelefon.setError("Festnetznummer eingeben");
                     return;
                 }
                 if (cuEmail.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Email (Benutzername) nicht eingetragen!", Toast.LENGTH_SHORT).show();
+                    cuEmail.setError("Email (Benutzername) nicht eingetragen!");
                     return;
                 }
                 if (cuPassword.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Passwort nicht eingetragen!", Toast.LENGTH_SHORT).show();
+                    cuPassword.setError("Passwort nicht eingetragen!");
                     return;
                 } else {
                     BackendlessUser user;
@@ -159,24 +156,12 @@ public class RegisterActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    final List<String> categories = new ArrayList<>();
-                    categories.add("homeGeoPoint");
-                    final Map<String, Object> metaData = new HashMap<>();
-                    // metaData.put("userID", "");
-                    metaData.put("isMidwife", Boolean.toString(sApp.isMidwife()));
-                    final GeoPoint homeGeoPoint = new GeoPoint(lat, lng, categories, metaData);
-
-                    /*Backendless.Geo.savePoint(homeGeoPoint, new AsyncCallback<GeoPoint>() {
-                        @Override
-                        public void handleResponse(GeoPoint response) {
-                            sApp.setHomeGeoPointId(response.getObjectId());
-                            homeGeoPoint.setObjectId(response.getObjectId());
-                        }
-
-                        @Override
-                        public void handleFault(BackendlessFault fault) {
-                        }
-                    });*/
+                    final GeoPoint homeGeoPoint = new GeoPoint();
+                    homeGeoPoint.setLatitude(lat);
+                    homeGeoPoint.setLongitude(lng);
+                    homeGeoPoint.addCategory("homeGeoPoint");
+                    homeGeoPoint.addMetadata("userID", sApp.getUserID());
+                    homeGeoPoint.addMetadata("isMidwife", Boolean.toString(sApp.isMidwife()));
 
                     // Setze Properties im User-Objekt
                     user.setEmail(cuEmail.getText().toString());
@@ -212,6 +197,7 @@ public class RegisterActivity extends AppCompatActivity {
                             public void handleResponse(BackendlessUser response) {
                                 Toast.makeText(getApplicationContext(), userAddress.getFirstname() + " " + userAddress.getLastname() + " wurde registriert!", Toast.LENGTH_LONG).show();
                                 sApp.setCurrentUser(response);
+                                sApp.setUserID(response.getUserId());
 
                                 Backendless.UserService.login(eMail, passWord, new AsyncCallback<BackendlessUser>() {
                                     @Override
@@ -246,19 +232,16 @@ public class RegisterActivity extends AppCompatActivity {
                         });
                     }
 
+                    Intent i;
                     if (!changeData && !sApp.isMidwife()) {
-                        Intent i = new Intent(getApplicationContext(), MapRequest.class);
-                        startActivity(i);
-                        finish();
+                        i = new Intent(getApplicationContext(), MapRequest.class);
                     } else if (!changeData && sApp.isMidwife()) {
-                        Intent i = new Intent(getApplicationContext(), ServiceActivity.class);
-                        startActivity(i);
-                        finish();
+                        i = new Intent(getApplicationContext(), ServiceActivity.class);
                     } else {
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(i);
-                        finish();
+                        i = new Intent(getApplicationContext(), MainActivity.class);
                     }
+                    startActivity(i);
+                    finish();
                 }
             }
         });
