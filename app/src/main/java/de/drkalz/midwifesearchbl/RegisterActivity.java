@@ -37,6 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final Boolean[] isMidwife = {false};
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -124,7 +125,6 @@ public class RegisterActivity extends AppCompatActivity {
                 }
                 if (cuPassword.getText().toString().matches("")) {
                     cuPassword.setError("Passwort nicht eingetragen!");
-                    return;
                 } else {
                     BackendlessUser user;
                     final UserAddress userAddress;
@@ -162,6 +162,8 @@ public class RegisterActivity extends AppCompatActivity {
                     homeGeoPoint.addCategory("homeGeoPoint");
                     homeGeoPoint.addMetadata("userID", sApp.getUserID());
                     homeGeoPoint.addMetadata("isMidwife", Boolean.toString(sApp.isMidwife()));
+                    homeGeoPoint.addMetadata("email", cuEmail.getText().toString());
+                    homeGeoPoint.addMetadata("phone", cuTelefon.getText().toString());
 
                     // Setze Properties im User-Objekt
                     user.setEmail(cuEmail.getText().toString());

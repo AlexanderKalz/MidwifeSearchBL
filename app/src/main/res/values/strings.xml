@@ -9,4 +9,5 @@
     <string name="title_activity_midwife_area">Wo kann man mich buchen?</string>
     <string name="tvstrasse">Straße:</string>
     <string name="title_activity_service">Serviceangebot</string>
+    <string name="title_activity_search">Suche Nachfragen</string>
 </resources>

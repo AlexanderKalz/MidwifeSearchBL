@@ -34,6 +34,7 @@ public class ServiceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ImageButton addServices = (ImageButton) findViewById(R.id.ib_add);
         final CheckBox cb_belegeburt = (CheckBox) findViewById(R.id.cb_beleggeburt);

@@ -19,11 +19,15 @@ import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.BackendlessDataQuery;
+import com.backendless.persistence.QueryOptions;
 import com.backendless.persistence.local.UserTokenStorageFactory;
+
+import java.util.Iterator;
 
 import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
 import de.drkalz.midwifesearchbl.demand.MapRequest;
 import de.drkalz.midwifesearchbl.offer.MidwifeArea;
+import de.drkalz.midwifesearchbl.offer.Search;
 import de.drkalz.midwifesearchbl.offer.ServiceActivity;
 import de.drkalz.midwifesearchbl.offer.SetBlockedTime;
 
@@ -59,72 +63,93 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void doSomeAction(View view) {
-
         int i = Integer.parseInt(view.getTag().toString());
-
         switch (i) {
             case 1:
                 if (sApp.isMidwife()) {
                     Intent intent = new Intent(MainActivity.this, SetBlockedTime.class);
                     startActivity(intent);
-                    finish();
                 } else {
-                    Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-                    intent.putExtra("userPassword", sApp.getUserPassword());
-                    intent.putExtra("changeData", true);
-                    startActivity(intent);
-                    finish();
+                    Toast.makeText(MainActivity.this, "Diese Funktion ist für Suchende deaktiviert.", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case 2:
                 if (sApp.isMidwife()) {
                     Intent intent = new Intent(MainActivity.this, MidwifeArea.class);
                     startActivity(intent);
-                    finish();
                 } else {
                     Intent intent = new Intent(MainActivity.this, MapRequest.class);
                     startActivity(intent);
-                    finish();
                 }
                 break;
             case 3:
                 if (sApp.isMidwife()) {
                     Intent intent = new Intent(MainActivity.this, ServiceActivity.class);
                     startActivity(intent);
-                    finish();
-                } else {
-
                 }
                 break;
-
             case 4:
                 if (sApp.isMidwife()) {
-
+                    Intent intentSearch = new Intent(MainActivity.this, Search.class);
+                    startActivity(intentSearch);
                 } else {
-
+                    Intent intentMap = new Intent(MainActivity.this, MapRequest.class);
+                    startActivity(intentMap);
                 }
                 break;
             case 5:
-                Backendless.UserService.logout(new AsyncCallback<Void>() {
-                    @Override
-                    public void handleResponse(Void response) {
-                        sApp.setCurrentUser(null);
-                        sApp.setUserAddress(null);
-                        sApp.setMidwife(false);
-                        sApp.setUserEmail("");
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-
-                    @Override
-                    public void handleFault(BackendlessFault fault) {
-                        Toast.makeText(getApplicationContext(), "Logout failed!", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                System.exit(0);
                 break;
         }
     }
+
+    protected void loadUser() {
+        sApp.setUserID(Backendless.UserService.loggedInUser());
+        String whereClause = "objectId='" + sApp.getUserID() + "'";
+        QueryOptions queryOptions = new QueryOptions();
+        queryOptions.addRelated("homeGeoPoint");
+        queryOptions.addRelated("hasService");
+        BackendlessDataQuery dataQuery = new BackendlessDataQuery();
+        dataQuery.setWhereClause(whereClause);
+        dataQuery.setQueryOptions(queryOptions);
+        Backendless.Data.of(BackendlessUser.class).find(dataQuery, new AsyncCallback<BackendlessCollection<BackendlessUser>>() {
+            @Override
+            public void handleResponse(BackendlessCollection<BackendlessUser> users) {
+                Iterator<BackendlessUser> userIterator = users.getCurrentPage().iterator();
+                while (userIterator.hasNext()) {
+                    BackendlessUser user = userIterator.next();
+                    Backendless.UserService.setCurrentUser(user);
+                    sApp.setCurrentUser(user);
+                    isMidwife = (boolean) user.getProperty("isMidwife");
+                    sApp.setMidwife(isMidwife);
+                    sApp.setUserEmail(user.getEmail());
+
+                    String whereClause = "Users[Address].objectId='" + user.getObjectId() + "'";
+                    BackendlessDataQuery dataQuery = new BackendlessDataQuery();
+                    dataQuery.setWhereClause(whereClause);
+                    Backendless.Persistence.of(UserAddress.class).find(dataQuery, new AsyncCallback<BackendlessCollection<UserAddress>>() {
+                        @Override
+                        public void handleResponse(BackendlessCollection<UserAddress> response) {
+                            for (UserAddress item : response.getCurrentPage()) {
+                                sApp.setUserAddress(item);
+                                tvUser.setText(sApp.getFullUsername());
+                            }
+                        }
+
+                        @Override
+                        public void handleFault(BackendlessFault fault) {
+                        }
+                    });
+                    setButtons();
+                }
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,56 +177,16 @@ public class MainActivity extends AppCompatActivity {
         if (sApp.getCurrentUser() == null) {
             final String userToken = UserTokenStorageFactory.instance().getStorage().get();
             if (userToken != null && !userToken.equals("")) {
-                sApp.setUserID(Backendless.UserService.loggedInUser());
-                Backendless.UserService.findById(sApp.getUserID(), new AsyncCallback<BackendlessUser>() {
-                    @Override
-                    public void handleResponse(BackendlessUser response) {
-                        Backendless.UserService.setCurrentUser(response);
-                        sApp.setCurrentUser(Backendless.UserService.CurrentUser());
-                        isMidwife = (boolean) response.getProperty("isMidwife");
-                        sApp.setMidwife(isMidwife);
-                        sApp.setUserEmail(response.getEmail());
-
-                        String whereClause = "Users[Address].objectId='" + response.getObjectId() + "'";
-                        BackendlessDataQuery dataQuery = new BackendlessDataQuery();
-                        dataQuery.setWhereClause(whereClause);
-                        Backendless.Persistence.of(UserAddress.class).find(dataQuery, new AsyncCallback<BackendlessCollection<UserAddress>>() {
-                            @Override
-                            public void handleResponse(BackendlessCollection<UserAddress> response) {
-                                for (UserAddress item : response.getCurrentPage()) {
-                                    sApp.setUserAddress(item);
-                                    tvUser.setText(sApp.getFullUsername());
-                                }
-                            }
-
-                            @Override
-                            public void handleFault(BackendlessFault fault) {
-                            }
-                        });
-                        setButtons();
-                    }
-                    @Override
-                    public void handleFault(BackendlessFault fault) {
-                        Toast.makeText(getApplicationContext(), fault.getDetail(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                loadUser();
             } else {
                 tvUser.setText(sApp.getFullUsername());
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
-                finish();
             }
+        } else {
+            loadUser();
         }
     }
-
-/*    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (sApp.getCurrentUser() != null) {
-            tvUser.setText(sApp.getFullUsername());
-        }
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -218,7 +203,30 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.menu_register) {
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            intent.putExtra("userPassword", sApp.getUserPassword());
+            intent.putExtra("changeData", true);
+            startActivity(intent);
+            return true;
+        }
+        if (id == R.id.menu_logout) {
+            Backendless.UserService.logout(new AsyncCallback<Void>() {
+                @Override
+                public void handleResponse(Void response) {
+                    sApp.setCurrentUser(null);
+                    sApp.setUserAddress(null);
+                    sApp.setMidwife(false);
+                    sApp.setUserEmail("");
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void handleFault(BackendlessFault fault) {
+                    Toast.makeText(getApplicationContext(), "Logout failed!", Toast.LENGTH_SHORT).show();
+                }
+            });
             return true;
         }
 

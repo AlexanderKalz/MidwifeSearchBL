@@ -61,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
                                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
                                     i.putExtra("fullname", sApp.getFullUsername());
                                     startActivity(i);
-                                    finish();
                                 }
                             }
 
@@ -87,11 +86,10 @@ public class LoginActivity extends AppCompatActivity {
                                     i.putExtra("userEmail", userEmail.getText().toString());
                                     i.putExtra("userPassword", userPassword.getText().toString());
                                     startActivity(i);
-                                    finish();
                                 }
                                 break;
                             case "3006":
-                                Toast.makeText(getApplicationContext(), "Email oder Passwort eingeben!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Bitte Email oder Passwort eingeben!", Toast.LENGTH_LONG).show();
                                 break;
                         }
                     }
@@ -107,7 +105,6 @@ public class LoginActivity extends AppCompatActivity {
                 i.putExtra("userEmail", userEmail.getText().toString());
                 i.putExtra("userPassword", userPassword.getText().toString());
                 startActivity(i);
-                finish();
             }
         });
     }

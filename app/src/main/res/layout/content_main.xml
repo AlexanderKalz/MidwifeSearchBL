@@ -83,7 +83,7 @@
         android:layout_marginTop="98dp"
         android:onClick="doSomeAction"
         android:tag="5"
-        android:text="Logout" />
+        android:text="Beenden" />
 
     <TextView
         android:id="@+id/tv_Abwesenheit"
