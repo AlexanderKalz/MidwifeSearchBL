@@ -24,6 +24,7 @@ import com.backendless.persistence.local.UserTokenStorageFactory;
 
 import java.util.Iterator;
 
+import de.drkalz.midwifesearchbl.dataObjects.BlockedTime;
 import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
 import de.drkalz.midwifesearchbl.demand.MapRequest;
 import de.drkalz.midwifesearchbl.offer.MidwifeArea;
@@ -62,6 +63,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void loadBlockedTimes() {
+        sApp.clearBlockedTimes();
+        String searchClause = "midwifeID='" + sApp.getCurrentUser().getObjectId() + "'";
+        BackendlessDataQuery query = new BackendlessDataQuery();
+        query.setWhereClause(searchClause);
+        Backendless.Persistence.of(BlockedTime.class).find(query, new AsyncCallback<BackendlessCollection<BlockedTime>>() {
+            @Override
+            public void handleResponse(BackendlessCollection<BlockedTime> response) {
+                if (response.getTotalObjects() > 0) {
+                    for (BlockedTime item : response.getData()) {
+                        sApp.setBlockedTime(item);
+                    }
+                } else {
+                    sApp.clearBlockedTimes();
+                }
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+            }
+        });
+    }
+
     public void doSomeAction(View view) {
         int i = Integer.parseInt(view.getTag().toString());
         switch (i) {
@@ -90,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 4:
                 if (sApp.isMidwife()) {
+                    loadBlockedTimes();
                     Intent intentSearch = new Intent(MainActivity.this, Search.class);
                     startActivity(intentSearch);
                 } else {

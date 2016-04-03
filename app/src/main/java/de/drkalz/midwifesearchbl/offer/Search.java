@@ -20,8 +20,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
-
 import de.drkalz.midwifesearchbl.R;
 import de.drkalz.midwifesearchbl.StartApp;
 import de.drkalz.midwifesearchbl.dataObjects.BlockedTime;
@@ -31,7 +29,6 @@ import de.drkalz.midwifesearchbl.dataObjects.ServiceArea;
 public class Search extends FragmentActivity implements OnMapReadyCallback {
 
     final StartApp sApp = StartApp.getInstance();
-    ArrayList<BlockedTime> blockedTimes = new ArrayList<>();
     private GoogleMap mMap;
 
     @Override
@@ -43,31 +40,11 @@ public class Search extends FragmentActivity implements OnMapReadyCallback {
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        // Lade die Abwesenheitszeiten der aktuellen Hebamme
-        blockedTimes.clear();
-        String whereClause = "midwifeID='" + sApp.getCurrentUser().getObjectId() + "'";
-        BackendlessDataQuery dataQuery = new BackendlessDataQuery();
-        dataQuery.setWhereClause(whereClause);
-        Backendless.Persistence.of(BlockedTime.class).find(dataQuery, new AsyncCallback<BackendlessCollection<BlockedTime>>() {
-            @Override
-            public void handleResponse(BackendlessCollection<BlockedTime> response) {
-                if (response.getTotalObjects() > 0) {
-                    for (BlockedTime item : response.getData()) {
-                        blockedTimes.add(item);
-                    }
-                } else {
-                    blockedTimes.clear();
-                }
-            }
-
-            @Override
-            public void handleFault(BackendlessFault fault) {
-            }
-        });
-
         // Suche die Angebotsgebiete der aktuellen Hebamme
+        String whereClause = "midwifeID='" + sApp.getCurrentUser().getObjectId() + "'";
         QueryOptions queryOptions = new QueryOptions();
         queryOptions.addRelated("servicePoint");
+        BackendlessDataQuery dataQuery = new BackendlessDataQuery();
         dataQuery.setWhereClause(whereClause);
         dataQuery.setQueryOptions(queryOptions);
         Backendless.Persistence.of(ServiceArea.class).find(dataQuery, new AsyncCallback<BackendlessCollection<ServiceArea>>() {
@@ -100,7 +77,8 @@ public class Search extends FragmentActivity implements OnMapReadyCallback {
                                                     //
                                                     for (Request geburtsDatum : requests.getCurrentPage()) {
                                                         boolean available = true;
-                                                        for (BlockedTime abwesenheit : blockedTimes) {
+                                                        // Lade die Abwesenheitszeiten der aktuellen Hebamme
+                                                        for (BlockedTime abwesenheit : sApp.getBlockedTimes()) {
                                                             if (geburtsDatum.getDateOfBirth().after(abwesenheit.getStartOfBlock())
                                                                     && geburtsDatum.getDateOfBirth().before(abwesenheit.getEndOfBlock())) {
                                                                 available = false;

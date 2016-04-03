@@ -14,8 +14,9 @@ public class ServiceArea
   private String objectId;
   private Double radius;
   private GeoPoint servicePoint;
+  private String midwifeID;
 
-  public static ServiceArea findById( String id )
+  public static ServiceArea findById(String id)
   {
     return Backendless.Data.of( ServiceArea.class ).findById( id );
   }
@@ -28,7 +29,7 @@ public class ServiceArea
     }
     else
     {
-      Future<ServiceArea> future = new Future<ServiceArea>();
+      Future<ServiceArea> future = new Future<>();
       Backendless.Data.of( ServiceArea.class ).findById( id, future );
 
       return future;
@@ -53,7 +54,7 @@ public class ServiceArea
     }
     else
     {
-      Future<ServiceArea> future = new Future<ServiceArea>();
+      Future<ServiceArea> future = new Future<>();
       Backendless.Data.of( ServiceArea.class ).findFirst( future );
 
       return future;
@@ -78,7 +79,7 @@ public class ServiceArea
     }
     else
     {
-      Future<ServiceArea> future = new Future<ServiceArea>();
+      Future<ServiceArea> future = new Future<>();
       Backendless.Data.of( ServiceArea.class ).findLast( future );
 
       return future;
@@ -103,7 +104,7 @@ public class ServiceArea
     }
     else
     {
-      Future<BackendlessCollection<ServiceArea>> future = new Future<BackendlessCollection<ServiceArea>>();
+      Future<BackendlessCollection<ServiceArea>> future = new Future<>();
       Backendless.Data.of( ServiceArea.class ).find( query, future );
 
       return future;
@@ -113,6 +114,14 @@ public class ServiceArea
   public static void findAsync(BackendlessDataQuery query, AsyncCallback<BackendlessCollection<ServiceArea>> callback )
   {
     Backendless.Data.of( ServiceArea.class ).find( query, callback );
+  }
+
+  public String getMidwifeID() {
+    return midwifeID;
+  }
+
+  public void setMidwifeID(String midwifeID) {
+    this.midwifeID = midwifeID;
   }
 
   public java.util.Date getCreated()
@@ -133,6 +142,10 @@ public class ServiceArea
   public String getObjectId()
   {
     return objectId;
+  }
+
+  public void setObjectId(String objectId) {
+    this.objectId = objectId;
   }
 
   public Double getRadius()
@@ -168,7 +181,7 @@ public class ServiceArea
     }
     else
     {
-      Future<ServiceArea> future = new Future<ServiceArea>();
+      Future<ServiceArea> future = new Future<>();
       Backendless.Data.of( ServiceArea.class ).save( this, future );
 
       return future;
@@ -193,7 +206,7 @@ public class ServiceArea
     }
     else
     {
-      Future<Long> future = new Future<Long>();
+      Future<Long> future = new Future<>();
       Backendless.Data.of( ServiceArea.class ).remove( this, future );
 
       return future;

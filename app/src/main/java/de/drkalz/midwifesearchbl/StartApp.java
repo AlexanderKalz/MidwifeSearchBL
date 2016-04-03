@@ -4,6 +4,9 @@ import android.app.Application;
 
 import com.backendless.BackendlessUser;
 
+import java.util.ArrayList;
+
+import de.drkalz.midwifesearchbl.dataObjects.BlockedTime;
 import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
 
 /**
@@ -12,6 +15,7 @@ import de.drkalz.midwifesearchbl.dataObjects.UserAddress;
 public class StartApp extends Application {
 
     private static StartApp singleInstance = null;
+    ArrayList<BlockedTime> blockedTimes = new ArrayList<>();
     private boolean isMidwife;
     private BackendlessUser mCurrentUser;
     private UserAddress mUserAddress;
@@ -23,6 +27,22 @@ public class StartApp extends Application {
 
     public static StartApp getInstance() {
         return singleInstance;
+    }
+
+    public ArrayList<BlockedTime> getBlockedTimes() {
+        return blockedTimes;
+    }
+
+    public void setBlockedTime(BlockedTime blockedTime) {
+        this.blockedTimes.add(blockedTime);
+    }
+
+    public BlockedTime getBlockedTime(int position) {
+        return blockedTimes.get(position);
+    }
+
+    public void clearBlockedTimes() {
+        this.blockedTimes.clear();
     }
 
     public String getUserID() {

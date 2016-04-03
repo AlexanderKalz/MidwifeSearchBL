@@ -36,7 +36,7 @@ import de.drkalz.midwifesearchbl.dataObjects.BlockedTime;
 public class SetBlockedTime extends AppCompatActivity {
 
     final StartApp sApp = StartApp.getInstance();
-    final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+    final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     ArrayList<String> savedBlock = new ArrayList<>();
     List<BlockedTime> savedList = new ArrayList<>();
     TextView headline;

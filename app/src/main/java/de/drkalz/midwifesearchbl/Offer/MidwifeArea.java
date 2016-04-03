@@ -60,6 +60,7 @@ public class MidwifeArea extends FragmentActivity implements OnMapReadyCallback 
         setContentView(R.layout.activity_midwife_area);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
         mMap = mapFragment.getMap();
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
@@ -68,7 +69,6 @@ public class MidwifeArea extends FragmentActivity implements OnMapReadyCallback 
         final EditText enterRadius = (EditText) findViewById(R.id.tv_Radius);
         radiusLayout.setVisibility(View.INVISIBLE);
 
-        // GeoPoint homeGeoPoint = (GeoPoint) sApp.getCurrentUser().getProperty("homeGeoPoint");
         LatLng homeLatLng = new LatLng(52.518611, 13.408333);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng, 10));
 
@@ -144,6 +144,7 @@ public class MidwifeArea extends FragmentActivity implements OnMapReadyCallback 
                             newServicePoint.addCategory("serviceArea");
                             newServicePoint.addMetadata("userID", sApp.getUserID());
                             newServicePoint.addMetadata("isMidwife", "true");
+                            newServicePoint.addMetadata("radius", radius);
                             newServicePoint.setLatitude(latLng.latitude);
                             newServicePoint.setLongitude(latLng.longitude);
 
@@ -189,6 +190,18 @@ public class MidwifeArea extends FragmentActivity implements OnMapReadyCallback 
                             .setPositiveButton("Löschen", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    GeoPoint toDeleteGeo = areaList.get(position).getServicePoint();
+                                    Backendless.Geo.removePoint(toDeleteGeo, new AsyncCallback<Void>() {
+                                        @Override
+                                        public void handleResponse(Void response) {
+
+                                        }
+
+                                        @Override
+                                        public void handleFault(BackendlessFault fault) {
+
+                                        }
+                                    });
                                     areaList.get(position).removeAsync(new AsyncCallback<Long>() {
                                         @Override
                                         public void handleResponse(Long response) {
@@ -211,14 +224,38 @@ public class MidwifeArea extends FragmentActivity implements OnMapReadyCallback 
                             .setNegativeButton("Radius ändern", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    radiusLayout.setVisibility(View.VISIBLE);
+                                    enterRadius.setText("");
+                                    enterRadius.setOnKeyListener(new View.OnKeyListener() {
+                                        @Override
+                                        public boolean onKey(View v, int keyCode, KeyEvent event) {
+                                            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                                                Circle changeCircle = circleList.get(position);
+                                                ServiceArea changeArea = areaList.get(position);
+                                                radius = Double.parseDouble(enterRadius.getText().toString()) * 1000;
+                                                Circle circle = mMap.addCircle(new CircleOptions()
+                                                        .center(changeCircle.getCenter())
+                                                        .radius(radius)
+                                                        .strokeColor(Color.BLUE));
+                                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(changeCircle.getCenter(), getZoomLevel(circle) - 1));
+                                                changeArea.setRadius(radius);
+                                                changeArea.saveAsync();
+                                            }
+                                            radiusLayout.setVisibility(View.INVISIBLE);
+                                            return true;
+                                        }
+                                    });
+                                }
+                            })
+                            .setNeutralButton("Abbrechen", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
                                 }
                             })
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .show();
-
                 }
-
                 return true;
             }
         });
