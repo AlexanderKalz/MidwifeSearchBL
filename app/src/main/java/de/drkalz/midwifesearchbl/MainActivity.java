@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, SetBlockedTime.class);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(MainActivity.this, "Diese Funktion ist für Suchende deaktiviert.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Diese Funktion ist deaktiviert.", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case 2:

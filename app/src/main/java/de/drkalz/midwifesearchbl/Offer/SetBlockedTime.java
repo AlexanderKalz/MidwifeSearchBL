@@ -21,6 +21,7 @@ import com.backendless.BackendlessCollection;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.BackendlessDataQuery;
+import com.backendless.persistence.QueryOptions;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,7 +37,7 @@ import de.drkalz.midwifesearchbl.dataObjects.BlockedTime;
 public class SetBlockedTime extends AppCompatActivity {
 
     final StartApp sApp = StartApp.getInstance();
-    final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
     ArrayList<String> savedBlock = new ArrayList<>();
     List<BlockedTime> savedList = new ArrayList<>();
     TextView headline;
@@ -59,8 +60,6 @@ public class SetBlockedTime extends AppCompatActivity {
     }
 
     public void saveItem(View view) {
-
-        createDate();
         if (addItem) {
             updateDatabase(1);
         } else {
@@ -80,6 +79,7 @@ public class SetBlockedTime extends AppCompatActivity {
 
     private void updateDatabase(int toDo) {
 
+        createDate();
         final BlockedTime newBlock = new BlockedTime();
         newBlock.setStartOfBlock(startOfBlock);
         newBlock.setEndOfBlock(endOfBlock);
@@ -167,6 +167,9 @@ public class SetBlockedTime extends AppCompatActivity {
 
         String whereClause = "midwifeID='" + sApp.getCurrentUser().getObjectId() + "'";
         BackendlessDataQuery dataQuery = new BackendlessDataQuery();
+        QueryOptions queryOptions = new QueryOptions();
+        queryOptions.addSortByOption("startOfBlock");
+        dataQuery.setQueryOptions(queryOptions);
         dataQuery.setWhereClause(whereClause);
         Backendless.Persistence.of(BlockedTime.class).find(dataQuery, new AsyncCallback<BackendlessCollection<BlockedTime>>() {
             @Override

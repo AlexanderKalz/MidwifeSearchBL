@@ -243,7 +243,6 @@ public class RegisterActivity extends AppCompatActivity {
                         i = new Intent(getApplicationContext(), MainActivity.class);
                     }
                     startActivity(i);
-                    finish();
                 }
             }
         });

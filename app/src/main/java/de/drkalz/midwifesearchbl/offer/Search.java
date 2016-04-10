@@ -1,7 +1,10 @@
 package de.drkalz.midwifesearchbl.offer;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
@@ -18,8 +21,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
+import de.drkalz.midwifesearchbl.MainActivity;
 import de.drkalz.midwifesearchbl.R;
 import de.drkalz.midwifesearchbl.StartApp;
 import de.drkalz.midwifesearchbl.dataObjects.BlockedTime;
@@ -29,6 +37,7 @@ import de.drkalz.midwifesearchbl.dataObjects.ServiceArea;
 public class Search extends FragmentActivity implements OnMapReadyCallback {
 
     final StartApp sApp = StartApp.getInstance();
+    ArrayList<Marker> markers = new ArrayList<>();
     private GoogleMap mMap;
 
     @Override
@@ -36,9 +45,11 @@ public class Search extends FragmentActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        final boolean[] requestsAvailable = {false};
+        markers.clear();
 
         // Suche die Angebotsgebiete der aktuellen Hebamme
         String whereClause = "midwifeID='" + sApp.getCurrentUser().getObjectId() + "'";
@@ -85,12 +96,34 @@ public class Search extends FragmentActivity implements OnMapReadyCallback {
                                                             }
                                                         }
                                                         if (available) {
+                                                            requestsAvailable[0] = true;
                                                             LatLng geoPoint = new LatLng(customer.getLatitude(), customer.getLongitude());
-                                                            mMap.addMarker(new MarkerOptions()
+                                                            Marker marker = mMap.addMarker(new MarkerOptions()
                                                                     .position(geoPoint)
                                                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                                                                    .title("Nachfrage"));
+                                                                    .title(customer.getMetadata("email") + "\n" + customer.getMetadata("phone")));
+                                                            markers.add(marker);
                                                         }
+                                                    }
+                                                }
+                                                if (!requestsAvailable[0]) {
+                                                    Snackbar.make(mapFragment.getView(), "Es besteht keine Nachfrage in Ihren Gebieten!", Snackbar.LENGTH_LONG).setAction("Hauptmenü", new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            Intent i = new Intent(Search.this, MainActivity.class);
+                                                            startActivity(i);
+                                                        }
+                                                    }).show();
+                                                } else {
+                                                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                                    for (Marker marker : markers) {
+                                                        builder.include(marker.getPosition());
+                                                    }
+                                                    LatLngBounds bounds = builder.build();
+                                                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 3));
+                                                    float currentZoom = mMap.getCameraPosition().zoom;
+                                                    if (currentZoom > 16) {
+                                                        mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
                                                     }
                                                 }
                                             }
@@ -110,12 +143,10 @@ public class Search extends FragmentActivity implements OnMapReadyCallback {
                     }
                 }
             }
-
             @Override
             public void handleFault(BackendlessFault fault) {
             }
         });
-
     }
 
     @Override
@@ -128,6 +159,5 @@ public class Search extends FragmentActivity implements OnMapReadyCallback {
 
         LatLng homeLatLng = new LatLng(52.518611, 13.408333);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng, 10));
-
     }
 }
