@@ -115,15 +115,17 @@ public class Search extends FragmentActivity implements OnMapReadyCallback {
                                                         }
                                                     }).show();
                                                 } else {
-                                                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                                                    for (Marker marker : markers) {
-                                                        builder.include(marker.getPosition());
-                                                    }
-                                                    LatLngBounds bounds = builder.build();
-                                                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 3));
-                                                    float currentZoom = mMap.getCameraPosition().zoom;
-                                                    if (currentZoom > 16) {
-                                                        mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+                                                    if (markers.size() > 1) {
+                                                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                                        for (Marker marker : markers) {
+                                                            builder.include(marker.getPosition());
+                                                        }
+                                                        LatLngBounds bounds = builder.build();
+                                                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 3));
+                                                    } else if (markers.size() == 1) {
+                                                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(0).getPosition(), 14));
+                                                    } else {
+
                                                     }
                                                 }
                                             }

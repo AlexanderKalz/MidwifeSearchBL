@@ -18,6 +18,7 @@ import com.backendless.BackendlessCollection;
 import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.geo.GeoPoint;
 import com.backendless.persistence.BackendlessDataQuery;
 import com.backendless.persistence.QueryOptions;
 import com.backendless.persistence.local.UserTokenStorageFactory;
@@ -94,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, SetBlockedTime.class);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(MainActivity.this, "Diese Funktion ist deaktiviert.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+                    startActivity(intent);
                 }
                 break;
             case 2:
@@ -123,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case 5:
+                finish();
                 System.exit(0);
                 break;
         }
@@ -148,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     isMidwife = (boolean) user.getProperty("isMidwife");
                     sApp.setMidwife(isMidwife);
                     sApp.setUserEmail(user.getEmail());
+                    sApp.setHomeGeoPoint((GeoPoint) user.getProperty("homeGeoPoint"));
 
                     String whereClause = "Users[Address].objectId='" + user.getObjectId() + "'";
                     BackendlessDataQuery dataQuery = new BackendlessDataQuery();
@@ -243,8 +247,10 @@ public class MainActivity extends AppCompatActivity {
                     sApp.setUserAddress(null);
                     sApp.setMidwife(false);
                     sApp.setUserEmail("");
+                    sApp.setHomeGeoPoint(null);
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(intent);
+                    finish();
                 }
 
                 @Override
@@ -254,7 +260,6 @@ public class MainActivity extends AppCompatActivity {
             });
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

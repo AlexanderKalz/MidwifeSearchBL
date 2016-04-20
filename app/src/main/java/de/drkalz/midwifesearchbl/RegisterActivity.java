@@ -136,6 +136,19 @@ public class RegisterActivity extends AppCompatActivity {
                                 userAddress.getCity() + " " +
                                 userAddress.getCountry() + " " +
                                 userAddress.getZip();
+                        GeoPoint toDeleteGeoPoint = new GeoPoint();
+                        toDeleteGeoPoint.setObjectId(sApp.getHomeGeoPoint().getObjectId());
+                        Backendless.Geo.removePoint(toDeleteGeoPoint, new AsyncCallback<Void>() {
+                            @Override
+                            public void handleResponse(Void response) {
+
+                            }
+
+                            @Override
+                            public void handleFault(BackendlessFault fault) {
+
+                            }
+                        });
                     } else {
                         user = new BackendlessUser();
                         userAddress = new UserAddress();

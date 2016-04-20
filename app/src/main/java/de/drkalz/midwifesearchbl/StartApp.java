@@ -3,6 +3,7 @@ package de.drkalz.midwifesearchbl;
 import android.app.Application;
 
 import com.backendless.BackendlessUser;
+import com.backendless.geo.GeoPoint;
 
 import java.util.ArrayList;
 
@@ -23,7 +24,7 @@ public class StartApp extends Application {
     private String mUserEmail;
     private String mUserPassword;
     private String fullUsername;
-    private String homeGeoPointId;
+    private GeoPoint homeGeoPoint;
 
     public static StartApp getInstance() {
         return singleInstance;
@@ -53,12 +54,12 @@ public class StartApp extends Application {
         this.userID = userID;
     }
 
-    public String getHomeGeoPointId() {
-        return homeGeoPointId;
+    public GeoPoint getHomeGeoPoint() {
+        return homeGeoPoint;
     }
 
-    public void setHomeGeoPointId(String homeGeoPointId) {
-        this.homeGeoPointId = homeGeoPointId;
+    public void setHomeGeoPoint(GeoPoint homeGeoPoint) {
+        this.homeGeoPoint = homeGeoPoint;
     }
 
     public boolean isMidwife() {
